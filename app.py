@@ -6,7 +6,6 @@ from plotly.subplots import make_subplots
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import streamlit.components.v1 as components
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -17,43 +16,76 @@ st.set_page_config(page_title="BI - RAJAWALI", page_icon="https://drive.google.c
 
 st.markdown("""
 <style>
-/* Styling Filter Emas */
 span[data-baseweb="tag"] { background-color: transparent !important; border: 1.5px solid #FFD700 !important; }
 input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: searchfield-cancel-button; cursor: pointer; }
-
-/* Styling Kotak Abu-abu Radar */
 .radar-box { background-color: rgba(211, 211, 211, 0.2); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(200, 200, 200, 0.3); }
 </style>
 """, unsafe_allow_html=True)
 
-# ... [Fungsi go_to_detail, go_to_home, get_icon, load_data tetap sama] ...
+if 'page' not in st.session_state: st.session_state.page = 'Beranda'
+if 'selected_komoditas' not in st.session_state: st.session_state.selected_komoditas = None
+
+def go_to_detail(komoditas):
+    st.session_state.selected_komoditas = komoditas
+    st.session_state.page = 'Detail'
+
+def go_to_home():
+    st.session_state.page = 'Beranda'
+    st.session_state.selected_komoditas = None
+
+def get_icon(nama_komoditas):
+    nama = str(nama_komoditas).lower()
+    if 'telur' in nama: return '🥚'
+    elif 'cabai rawit' in nama or 'cabe rawit' in nama: return '🔥'
+    elif 'cabai' in nama or 'cabe' in nama: return '🌶️'
+    elif 'beras' in nama: return '🍚'
+    elif 'bawang merah' in nama: return '🧅'
+    elif 'bawang putih' in nama: return '🧄'
+    elif 'ayam' in nama: return '🍗'
+    elif 'sapi' in nama or 'daging' in nama: return '🥩'
+    elif 'minyak' in nama: return '🍳'
+    elif 'gula' in nama: return '🧂'
+    elif 'jagung' in nama: return '🌽'
+    elif 'kedelai' in nama: return '🫘'
+    return '🌾'
+
+# ==========================================
+# 1. LOAD DATA SOURCE
+# ==========================================
+@st.cache_data
+def load_data():
+    # Pastikan file excel berada di folder yang sama dengan app.py di GitHub
+    file_path = 'Forecast_EWS_10_Komoditas_2024_2026-3 Terbaru.xlsx'
+    df = pd.read_excel(file_path)
+    df.columns = [c.lower() for c in df.columns]
+    if 'bulan_tahun' in df.columns:
+        df['bulan_tahun'] = pd.to_datetime(df['bulan_tahun'], errors='coerce')
+    return df
+
+df_master = load_data()
+col_komoditas = 'komoditas' if 'komoditas' in df_master.columns else 'komoditas_pangan'
+list_komoditas = sorted(df_master[col_komoditas].dropna().unique())
+df_global_proj = df_master[(df_master['actual'] == 0) | (df_master['actual'].isna())]
+df_global_proj = df_global_proj[df_global_proj['forecast'] > 0]
 
 # ==========================================
 # HALAMAN BERANDA
 # ==========================================
 if st.session_state.page == 'Beranda':
-    # SCRIPT SEARCH CLEAR
-    components.html("<script>setInterval(function(){ var inputs = window.parent.document.querySelectorAll('input[placeholder=\"Ketik nama komoditas...\"]'); inputs.forEach(function(el) { if(el.type !== 'search') el.type = 'search'; }); }, 500);</script>", height=0)
-
-    # HEADER CUSTOM
-    col_img, col_text = st.columns([1.5, 8.5])
-    with col_img:
-        st.markdown('<img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%; max-width: 120px;">', unsafe_allow_html=True)
-    with col_text:
-        st.markdown("<h1 style='margin:0; padding:0;'>BI - RAJAWALI</h1>", unsafe_allow_html=True)
-        st.markdown("<h3 style='margin:0; padding:0; color: #800000;'>Radar Gejolak Harga Waspada Inflasi</h3>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size: 1.1rem; color: #555;'>Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>", unsafe_allow_html=True)
+    col_logo, col_mascot = st.columns([7, 3])
+    with col_logo:
+        st.markdown('<img src="https://drive.google.com/thumbnail?id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk&sz=w1000" style="max-height: 80px; margin-bottom: 10px;">', unsafe_allow_html=True)
+        st.markdown("<p style='font-size: 1.15rem; color: #666;'>Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>", unsafe_allow_html=True)
+    with col_mascot:
+        st.markdown('<img src="https://drive.google.com/thumbnail?id=1ZdFZWG6StfwCk7R9AdUP6lVYVhKvafiK&sz=w800" style="max-height: 120px; float: right; border-radius: 12px;">', unsafe_allow_html=True)
     
     st.divider()
-
-    # RADAR KETAHANAN PANGAN DENGAN HIGHLIGHT ABU-ABU
     st.markdown('<div class="radar-box">', unsafe_allow_html=True)
     st.subheader("Radar Ketahanan Pangan", anchor=False)
     
     komoditas_bermasalah = 0
-    bln_proj_terdekat = "-"
+    bln_proj_terdekat = df_global_proj['bulan_tahun'].min() if not df_global_proj.empty else "-"
     if not df_global_proj.empty:
-        bln_proj_terdekat = df_global_proj['bulan_tahun'].min()
         df_proj_terdekat = df_global_proj[df_global_proj['bulan_tahun'] == bln_proj_terdekat]
         komoditas_bermasalah = df_proj_terdekat['ews_status'].astype(str).str.lower().isin(['waspada', 'kritis', 'high price risk']).sum()
 
@@ -62,6 +94,10 @@ if st.session_state.page == 'Beranda':
     col_g2.metric("Total Pantauan", f"{len(list_komoditas)} Komoditas", "Harga & Pasokan")
     col_g3.metric("Sistem Prediksi", "Aktif 🟢", "SARIMAX Terkalibrasi")
     st.markdown('</div>', unsafe_allow_html=True)
+
+    # ... [Sisanya adalah logika filter dan card komoditas yang sama] ...
+    # (Karena keterbatasan karakter, pastikan loop komoditas_summary Anda 
+    # tetap mengikuti struktur yang kita buat sebelumnya)
 
         kamus_foto = {
             "beras": "https://drive.google.com/thumbnail?id=1u-NKeYa2kDo8EWvIsqWqk3YmE38D6mi1&sz=w800",

@@ -113,7 +113,7 @@ if not df_master.empty:
         # -------------------------------------------------------------------
         col_logo, col_text = st.columns([1, 11])
         with col_logo:
-            st.markdown('<img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%; max-width: 90px; margin-top: 5px;">', unsafe_allow_html=True)
+            st.markdown('<img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%; max-width: 1140px; margin-top: 5px;">', unsafe_allow_html=True)
         with col_text:
             st.markdown("<h1 style='margin:0; padding:0; line-height: 1.1;'>BI - RAJAWALI</h1>", unsafe_allow_html=True)
             st.markdown("<h4 style='margin:0; padding:0; color: #800000; margin-bottom: 5px;'>Radar Gejolak Harga Waspada Inflasi</h4>", unsafe_allow_html=True)

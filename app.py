@@ -116,7 +116,7 @@ if not df_master.empty:
             st.markdown('<img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%; max-width: 1140px; margin-top: 5px;">', unsafe_allow_html=True)
         with col_text:
             st.markdown("<h1 style='margin:0; padding:0; line-height: 1.1;'>BI - RAJAWALI</h1>", unsafe_allow_html=True)
-            st.markdown("<h4 style='margin:0; padding:0; color: #FFFFFF; margin-bottom: 5px;'>Radar Gejolak Harga Waspada Inflasi</h4>", unsafe_allow_html=True)
+            st.markdown("<h4 style='margin:0; padding:0; color: #880000; margin-bottom: 5px;'>Radar Gejolak Harga Waspada Inflasi</h4>", unsafe_allow_html=True)
             # Menggunakan opacity agar teks adaptif terhadap mode gelap/terang
             st.markdown("<p style='font-size: 1.1rem; opacity: 0.8; margin:0;'>Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>", unsafe_allow_html=True)
 

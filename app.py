@@ -15,6 +15,7 @@ warnings.filterwarnings('ignore')
 # ==========================================
 st.set_page_config(page_title="BI - RAJAWALI", page_icon="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w128", layout="wide")
 
+# CSS: Menggunakan variabel adaptif (--secondary-background-color) agar kebal Dark Mode
 st.markdown("""
 <style>
 span[data-baseweb="tag"] {
@@ -30,6 +31,15 @@ span[data-baseweb="tag"] svg {
 input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: searchfield-cancel-button;
     cursor: pointer;
+}
+.radar-box { 
+    background-color: var(--secondary-background-color); 
+    padding: 30px; 
+    border-radius: 12px; 
+    margin-bottom: 30px; 
+    border-left: 6px solid #800000;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+    color: var(--text-color);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -98,36 +108,22 @@ if not df_master.empty:
     # ==========================================
     if st.session_state.page == 'Beranda':
 
-        # Script Clear Search
-        components.html("""
-        <script>
-            setInterval(function() {
-                var inputs = window.parent.document.querySelectorAll('input[placeholder="Ketik nama komoditas..."]');
-                inputs.forEach(function(el) {
-                    if(el.type !== 'search') {
-                        el.type = 'search';
-                    }
-                });
-            }, 500);
-        </script>
-        """, height=0)
-
         # -------------------------------------------------------------------
-        # CUSTOM HEADER: Logo Tanpa Teks (Kiri) + Teks H1/H3 (Kanan)
+        # CUSTOM HEADER: Logo Tanpa Teks (Kiri) + Teks (Kanan)
         # -------------------------------------------------------------------
         col_logo, col_text = st.columns([1, 11])
         with col_logo:
-            # Menggunakan logo burung tanpa teks
             st.markdown('<img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%; max-width: 90px; margin-top: 5px;">', unsafe_allow_html=True)
         with col_text:
             st.markdown("<h1 style='margin:0; padding:0; line-height: 1.1;'>BI - RAJAWALI</h1>", unsafe_allow_html=True)
             st.markdown("<h4 style='margin:0; padding:0; color: #800000; margin-bottom: 5px;'>Radar Gejolak Harga Waspada Inflasi</h4>", unsafe_allow_html=True)
-            st.markdown("<p style='font-size: 1.1rem; color: #555; margin:0;'>Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>", unsafe_allow_html=True)
+            # Menggunakan opacity agar teks adaptif terhadap mode gelap/terang
+            st.markdown("<p style='font-size: 1.1rem; opacity: 0.8; margin:0;'>Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>", unsafe_allow_html=True)
 
         st.divider()
 
         # -------------------------------------------------------------------
-        # RADAR KETAHANAN PANGAN DENGAN BACKGROUND ABU-ABU
+        # RADAR KETAHANAN PANGAN DENGAN BACKGROUND ADAPTIF
         # -------------------------------------------------------------------
         komoditas_bermasalah = 0
         bln_proj_terdekat_str = "-"
@@ -140,23 +136,23 @@ if not df_master.empty:
         warna_risiko = "#FF4B4B" if komoditas_bermasalah > 0 else "#21C354"
 
         radar_html = f"""
-        <div style="background-color: #f0f2f6; padding: 25px; border-radius: 12px; margin-bottom: 25px; border-left: 6px solid #800000; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-            <h3 style="margin-top: 0; margin-bottom: 20px; color: #31333F;">Radar Ketahanan Pangan</h3>
+        <div class="radar-box">
+            <h3 style="margin-top: 0; margin-bottom: 20px;">Radar Ketahanan Pangan</h3>
             <div style="display: flex; flex-wrap: wrap; gap: 20px;">
                 <div style="flex: 1; min-width: 200px;">
-                    <p style="margin: 0; font-size: 14px; color: #555;">Status Global</p>
+                    <p style="margin: 0; font-size: 14px; opacity: 0.7;">Status Global</p>
                     <h2 style="margin: 0; font-size: 2rem; color: {warna_risiko};">{komoditas_bermasalah} Berisiko</h2>
-                    <p style="margin: 0; font-size: 13px; color: #777;">Bulan Depan: {bln_proj_terdekat_str}</p>
+                    <p style="margin: 0; font-size: 13px; opacity: 0.6;">Bulan Depan: {bln_proj_terdekat_str}</p>
                 </div>
                 <div style="flex: 1; min-width: 200px;">
-                    <p style="margin: 0; font-size: 14px; color: #555;">Total Pantauan</p>
-                    <h2 style="margin: 0; font-size: 2rem; color: #31333F;">{len(list_komoditas)} Komoditas</h2>
-                    <p style="margin: 0; font-size: 13px; color: #777;">Harga & Pasokan</p>
+                    <p style="margin: 0; font-size: 14px; opacity: 0.7;">Total Pantauan</p>
+                    <h2 style="margin: 0; font-size: 2rem;">{len(list_komoditas)} Komoditas</h2>
+                    <p style="margin: 0; font-size: 13px; opacity: 0.6;">Harga & Pasokan</p>
                 </div>
                 <div style="flex: 1; min-width: 200px;">
-                    <p style="margin: 0; font-size: 14px; color: #555;">Sistem Prediksi</p>
-                    <h2 style="margin: 0; font-size: 2rem; color: #31333F;">Aktif 🟢</h2>
-                    <p style="margin: 0; font-size: 13px; color: #777;">SARIMAX Terkalibrasi</p>
+                    <p style="margin: 0; font-size: 14px; opacity: 0.7;">Sistem Prediksi</p>
+                    <h2 style="margin: 0; font-size: 2rem;">Aktif 🟢</h2>
+                    <p style="margin: 0; font-size: 13px; opacity: 0.6;">SARIMAX Terkalibrasi</p>
                 </div>
             </div>
         </div>
@@ -286,6 +282,7 @@ if not df_master.empty:
     # HALAMAN 2: DETAIL KOMODITAS
     # ==========================================
     elif st.session_state.page == 'Detail':
+
         komoditas = st.session_state.selected_komoditas
         icon_detail = get_icon(komoditas)
 

@@ -113,10 +113,10 @@ if not df_master.empty:
 
         col_logo, col_mascot = st.columns([7, 3])
         with col_logo:
-            st.markdown('<img src="https://drive.google.com/thumbnail?id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk&sz=w1000" style="max-height: 80px; margin-bottom: 10px;">', unsafe_allow_html=True)
+            st.markdown('<img src="https://drive.google.com/thumbnail?id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk&sz=w1000" style="max-height: 140px; margin-bottom: 10px;">', unsafe_allow_html=True)
             st.markdown("<p style='font-size: 1.15rem; color: #666; margin-top: -5px;'>Dashboard Early Warning System (EWS) untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>", unsafe_allow_html=True)
         with col_mascot:
-            st.markdown('<img src="https://drive.google.com/thumbnail?id=1ZdFZWG6StfwCk7R9AdUP6lVYVhKvafiK&sz=w800" style="max-height: 120px; float: right; border-radius: 12px; object-fit: cover;">', unsafe_allow_html=True)
+            st.markdown('<img src="https://drive.google.com/thumbnail?id=1ZdFZWG6StfwCk7R9AdUP6lVYVhKvafiK&sz=w800" style="max-height: 200px; float: right; border-radius: 12px; object-fit: cover;">', unsafe_allow_html=True)
 
         st.divider()
 

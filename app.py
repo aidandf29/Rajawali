@@ -70,7 +70,6 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     backdrop-filter: blur(8px);
 }
 
-/* 5. FOOTER AMPERA (Lebih Siluet, Turun 25%, Tembus Kanan Kiri) */
 /* 5. FOOTER AMPERA */
 .footer-wrapper {
     width: 100vw;
@@ -82,25 +81,19 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     margin-top: 60px;
 }
 
-.footer-siluet {
-    width: 100%;
-    height: 420px;
-    background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
-    background-repeat: no-repeat;
-    background-position: center bottom;
-    background-size: cover;
-    filter: brightness(0) invert(0.5);
-    opacity: 0.15;
-}
-
 .footer-text-bar {
     width: 100%;
-    padding: 14px 0;
+    padding: 200px 0 14px 0;
     text-align: center;
     border-top: 1px solid rgba(150, 150, 150, 0.2);
     font-size: 13px;
     font-weight: 600;
     opacity: 0.7;
+    background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: 100% auto;
+    filter: brightness(0) invert(0.5);
 }
 .footer-container {
     width: 100vw;
@@ -591,7 +584,6 @@ if not df_master.empty:
 # ==========================================
 st.markdown("""
 <div class="footer-wrapper">
-    <div class="footer-siluet"></div>
     <div class="footer-text-bar">
         &copy; 2026 Kelompok 2 PCPM 40 - Bank Indonesia
     </div>

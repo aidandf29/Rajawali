@@ -510,7 +510,8 @@ if not df_master.empty:
 # FOOTER WEBSITE (Ramping & Compact)
 # ==========================================
 st.markdown("""
-<div style='text-align: center; margin-top: 30px; padding: 10px 0; font-size: 12px; opacity: 0.6; border-top: 1px solid rgba(150, 150, 150, 0.2);'>
-    &copy; 2026 Hak Cipta Kelompok 2 PCPM 40 - Bank Indonesia
+<div class="footer-ampera">
+    <img src="https://drive.google.com/uc?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk" style="width: 200px; opacity: 0.5;">
+    <p style="font-size: 12px; margin-top: 10px;">&copy; 2026 Kelompok 2 PCPM 40 - Bank Indonesia</p>
 </div>
 """, unsafe_allow_html=True)

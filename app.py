@@ -511,23 +511,41 @@ if not df_master.empty:
 # ==========================================
 st.markdown("""
 <style>
-/* Kontainer khusus untuk background Ampera */
-.ampera-bg {
-    position: fixed;
+.footer-container {
+    position: relative;
+    width: 100%;
+    margin-top: 50px;
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid rgba(150, 150, 150, 0.2);
+}
+
+.footer-bg-siluet {
+    position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 300px; /* Atur ketinggian siluet */
+    height: 100%;
     background-image: url('https://drive.google.com/thumbnail?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk&sz=w800');
     background-repeat: no-repeat;
     background-position: bottom center;
     background-size: contain;
-    opacity: 0.15; /* Siluet sangat tipis */
-    pointer-events: none; /* Agar tidak menghalangi klik mouse ke elemen di depannya */
+    opacity: 0.15; /* Siluet samar */
     z-index: 0;
+}
+
+.footer-text {
+    position: relative;
+    z-index: 1;
+    font-size: 12px;
+    opacity: 0.8;
 }
 </style>
 
-<!-- Panggil elemen ini di akhir script -->
-<div class="ampera-bg"></div>
+<div class="footer-container">
+    <div class="footer-bg-siluet"></div>
+    <div class="footer-text">
+        &copy; 2026 Kelompok 2 PCPM 40 - Bank Indonesia
+    </div>
+</div>
 """, unsafe_allow_html=True)

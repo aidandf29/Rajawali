@@ -42,7 +42,6 @@ span[data-baseweb="tag"] span {
     border-left: 6px solid #D32F2F;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
 }
-/* Catatan: Trik CSS sticky sebelumnya telah dihapus dari sini agar dropdown kembali normal */
 </style>
 """, unsafe_allow_html=True)
 
@@ -481,7 +480,7 @@ if not df_master.empty:
                                 st.error(f"Gagal mengirim email. Periksa kembali koneksi internet dan App Password Anda. Error: {e}")
 
 # ==========================================
-# FOOTER WEBSITE 
+# FOOTER WEBSITE
 # ==========================================
 st.markdown("""
 <div style='text-align: center; margin-top: 30px; padding: 10px 0; font-size: 12px; opacity: 0.6; border-top: 1px solid rgba(150, 150, 150, 0.2);'>

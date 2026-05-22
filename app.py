@@ -22,7 +22,7 @@ st.set_page_config(
 # Styling CSS 
 st.markdown("""
 <style>
-/* Styling Filter Emas */
+/* Styling Filter Emas dengan penyesuaian warna teks agar terlihat di Light & Dark Mode */
 span[data-baseweb="tag"] { 
     background-color: transparent !important; 
     border: 1.5px solid #FFD700 !important; 
@@ -32,7 +32,7 @@ span[data-baseweb="tag"] span {
     color: var(--text-color) !important; 
 }
 
-/* Background Abu-abu + Siluet Ampera Terbentang */
+/* Background Abu-abu Permanen & Garis Merah untuk Radar */
 .radar-box { 
     background-color: rgba(150, 150, 150, 0.15); 
     padding: 30px; 
@@ -40,14 +40,6 @@ span[data-baseweb="tag"] span {
     margin-bottom: 30px; 
     border-left: 6px solid #D32F2F;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-    
-    /* Konfigurasi Ampera.png sebagai siluet terbentang */
-    background-image: linear-gradient(rgba(150, 150, 150, 0.8), rgba(150, 150, 150, 0.8)), 
-                      url('https://drive.google.com/thumbnail?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk&sz=w800');
-    background-repeat: no-repeat;
-    background-position: bottom right; /* Siluet akan menyesuaikan dari pojok bawah kanan */
-    background-size: 100% auto; /* Stretch lebar 100%, tinggi proporsional */
-    background-blend-mode: multiply; /* Efek siluet lebih nyata */
 }
 </style>
 """, unsafe_allow_html=True)
@@ -532,8 +524,8 @@ st.markdown("""
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 500%;
-    height: 500%;
+    width: 100%;
+    height: 100%;
     background-image: url('https://drive.google.com/thumbnail?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk&sz=w800');
     background-repeat: no-repeat;
     background-position: bottom center;

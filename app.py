@@ -19,21 +19,18 @@ st.set_page_config(
     layout="wide"
 )
 
-# CSS Termasuk Import Google Material Icons untuk Icon Monochrome Adaptif
+# Integrasi FontAwesome untuk Icon Monokrom & Perbaikan CSS
 st.markdown("""
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0');
-
-/* Styling Filter Adaptif */
+/* Styling Filter Emas dengan penyesuaian warna teks agar terlihat di Light & Dark Mode */
 span[data-baseweb="tag"] { 
-    background-color: var(--secondary-background-color) !important; 
-    border: 1.5px solid var(--text-color) !important; 
+    background-color: transparent !important; 
+    border: 1.5px solid #FFD700 !important; 
+    color: var(--text-color) !important;
 }
 span[data-baseweb="tag"] span { 
     color: var(--text-color) !important; 
-}
-span[data-baseweb="tag"] svg { 
-    fill: var(--text-color) !important; 
 }
 
 /* Background Abu-abu Permanen & Garis Merah untuk Radar */
@@ -46,10 +43,9 @@ span[data-baseweb="tag"] svg {
     box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
 }
 
-/* Base style untuk Icon Material */
-.material-symbols-rounded {
-    vertical-align: middle;
-    color: var(--text-color);
+/* Trik CSS meminimalisir bug Dropdown Sticky saat di-scroll */
+div[data-testid="stSelectbox"], div[data-testid="stMultiSelect"] {
+    transform: translateZ(0); 
 }
 </style>
 """, unsafe_allow_html=True)
@@ -66,22 +62,22 @@ def go_to_home():
     st.session_state.page = 'Beranda'
     st.session_state.selected_komoditas = None
 
-# Mengganti Emoji dengan ID Google Material Icons
+# Mengganti Emoji dengan Icon FontAwesome yang elegan dan responsif terhadap tema
 def get_icon(nama_komoditas):
     nama = str(nama_komoditas).lower()
-    if 'telur' in nama: return 'egg'
-    elif 'cabai rawit' in nama or 'cabe rawit' in nama: return 'local_fire_department'
-    elif 'cabai' in nama or 'cabe' in nama: return 'eco'
-    elif 'beras' in nama: return 'rice_bowl'
-    elif 'bawang merah' in nama: return 'spa'
-    elif 'bawang putih' in nama: return 'lens_blur'
-    elif 'ayam' in nama: return 'set_meal'
-    elif 'sapi' in nama or 'daging' in nama: return 'restaurant'
-    elif 'minyak' in nama: return 'water_drop'
-    elif 'gula' in nama: return 'kitchen'
-    elif 'jagung' in nama: return 'grass'
-    elif 'kedelai' in nama: return 'grain'
-    return 'category'
+    if 'telur' in nama: return '<i class="fa-solid fa-egg"></i>'
+    elif 'cabai rawit' in nama or 'cabe rawit' in nama: return '<i class="fa-solid fa-pepper-hot"></i>'
+    elif 'cabai' in nama or 'cabe' in nama: return '<i class="fa-solid fa-pepper-hot"></i>'
+    elif 'beras' in nama: return '<i class="fa-solid fa-bowl-rice"></i>'
+    elif 'bawang merah' in nama: return '<i class="fa-solid fa-seedling"></i>'
+    elif 'bawang putih' in nama: return '<i class="fa-solid fa-seedling"></i>'
+    elif 'ayam' in nama: return '<i class="fa-solid fa-drumstick-bite"></i>'
+    elif 'sapi' in nama or 'daging' in nama: return '<i class="fa-solid fa-cow"></i>'
+    elif 'minyak' in nama: return '<i class="fa-solid fa-oil-can"></i>'
+    elif 'gula' in nama: return '<i class="fa-solid fa-cube"></i>'
+    elif 'jagung' in nama: return '<i class="fa-solid fa-wheat-awn"></i>'
+    elif 'kedelai' in nama: return '<i class="fa-solid fa-leaf"></i>'
+    return '<i class="fa-solid fa-box"></i>'
 
 # ==========================================
 # 1. LOAD DATA SOURCE
@@ -118,9 +114,6 @@ if not df_master.empty:
     # ==========================================
     if st.session_state.page == 'Beranda':
 
-        # -------------------------------------------------------------------
-        # CUSTOM HEADER PROPORSIONAL
-        # -------------------------------------------------------------------
         col_logo, col_text = st.columns([1.2, 8.8])
         with col_logo:
             st.markdown('<img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%; max-width: 150px; margin-top: 5px;">', unsafe_allow_html=True)
@@ -132,7 +125,7 @@ if not df_master.empty:
         st.divider()
 
         # -------------------------------------------------------------------
-        # RADAR FLUKTUASI HARGA DENGAN BACKGROUND ABU-ABU
+        # RADAR FLUKTUASI HARGA
         # -------------------------------------------------------------------
         komoditas_bermasalah = 0
         bln_proj_terdekat_str = "-"
@@ -273,12 +266,12 @@ if not df_master.empty:
                 <div style="position: relative; overflow: hidden; border: 2px solid {warna_border}; border-radius: 10px; padding: 15px; background-color: {warna_bg}; margin-bottom: 10px; color: inherit;">
                     {img_tag}
                     <div style="position: relative; z-index: 1;">
-                        <div style="font-size: 1.15rem; font-weight: bold; margin-top:0px; margin-bottom:10px; color: inherit; display: flex; align-items: center; gap: 8px;">
-                            <span class="material-symbols-rounded">{icon}</span> {kom}
+                        <div style="font-size: 1.15rem; font-weight: bold; margin-top:0px; margin-bottom:10px; color: inherit; display:flex; align-items:center; gap:8px;">
+                            <span style="font-size: 1.3rem;">{icon}</span> {kom}
                         </div>
-                        <p style="margin:0px; font-size:14px; color: inherit;">Harga Saat Ini: <b>Rp {harga_n:,.0f}</b></p>
-                        <p style="margin:0px; font-size:14px; color: inherit;">Prediksi (N+1): <b>Rp {harga_n1:,.0f}</b></p>
-                        <p style="margin:0px; font-size:18px; font-weight:bold; color:{warna_inflasi};">{tanda_inflasi} {delta_n1:+.2f}%</p>
+                        <p style="margin:0px; font-size:15px; color: inherit;">Harga Saat Ini: <b>Rp {harga_n:,.0f}</b></p>
+                        <p style="margin:0px; font-size:15px; color: inherit;">Prediksi (N+1): <b>Rp {harga_n1:,.0f}</b></p>
+                        <p style="margin-top:5px; margin-bottom:0px; font-size:18px; font-weight:bold; color:{warna_inflasi};">{tanda_inflasi} {delta_n1:+.2f}%</p>
                         <hr style="margin: 10px 0px; border-color: {warna_border}; opacity: 0.3;">
                         <p style="margin:0px; font-size:14px; font-weight:bold; color:{warna_border};">Status: {status_k}</p>
                     </div>
@@ -300,7 +293,7 @@ if not df_master.empty:
         with col_b1:
             st.button("Kembali", on_click=go_to_home, type="secondary", use_container_width=True)
         with col_b2:
-            st.markdown(f"<div style='font-size:2rem; font-weight:bold; margin-top:-5px; color:inherit; display: flex; align-items: center; gap: 10px;'><span class='material-symbols-rounded' style='font-size: 2.5rem;'>{icon_detail}</span> Analisis Detail EWS: {komoditas}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='font-size:2rem; font-weight:bold; margin-top:-5px; color:inherit; display:flex; align-items:center; gap:12px;'><span>{icon_detail}</span> Analisis Detail EWS: {komoditas}</div>", unsafe_allow_html=True)
 
         df_filtered = df_master[df_master[col_komoditas] == komoditas].copy().sort_values('bulan_tahun')
         df_hist = df_filtered[df_filtered['actual'] > 0].copy()
@@ -492,10 +485,10 @@ if not df_master.empty:
                                 st.error(f"Gagal mengirim email. Periksa kembali koneksi internet dan App Password Anda. Error: {e}")
 
 # ==========================================
-# FOOTER (Muncul di semua halaman)
+# FOOTER WEBSITE (Update: Ramping & Compact)
 # ==========================================
 st.markdown("""
-<div style="text-align: center; margin-top: 50px; padding: 20px; color: var(--text-color); opacity: 0.6; font-size: 14px; border-top: 1px solid rgba(150, 150, 150, 0.2);">
-    &copy; 2024 Kelompok 2 PCPM 40 - Bank Indonesia
+<div style='text-align: center; margin-top: 30px; padding: 10px 0; font-size: 12px; opacity: 0.6; border-top: 1px solid rgba(150, 150, 150, 0.2);'>
+    &copy; 2026 Hak Cipta Kelompok 2 PCPM 40 - Bank Indonesia
 </div>
 """, unsafe_allow_html=True)

@@ -510,13 +510,24 @@ if not df_master.empty:
 # FOOTER WEBSITE (Ramping & Compact)
 # ==========================================
 st.markdown("""
-<div class="footer-ampera" style="text-align: center; margin-top: 40px; padding: 20px;">
-    <!-- Menggunakan format thumbnail dengan lebar 300px -->
-    <img src="https://drive.google.com/thumbnail?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk&sz=w300" 
-         style="width: 200px; opacity: 0.5; filter: grayscale(50%);" 
-         alt="Logo Ampera">
-    <p style="font-size: 12px; margin-top: 10px; opacity: 0.6;">
-        &copy; 2026 Kelompok 2 PCPM 40 - Bank Indonesia
-    </p>
-</div>
+<style>
+/* Kontainer khusus untuk background Ampera */
+.ampera-bg {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 300px; /* Atur ketinggian siluet */
+    background-image: url('https://drive.google.com/thumbnail?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk&sz=w800');
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: contain;
+    opacity: 0.15; /* Siluet sangat tipis */
+    pointer-events: none; /* Agar tidak menghalangi klik mouse ke elemen di depannya */
+    z-index: 0;
+}
+</style>
+
+<!-- Panggil elemen ini di akhir script -->
+<div class="ampera-bg"></div>
 """, unsafe_allow_html=True)

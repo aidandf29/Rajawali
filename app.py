@@ -22,25 +22,106 @@ st.set_page_config(
 # Styling CSS 
 st.markdown("""
 <style>
-/* Styling Filter Emas dengan penyesuaian warna teks agar terlihat di Light & Dark Mode */
-span[data-baseweb="tag"] { 
-    background-color: transparent !important; 
-    border: 1.5px solid #FFD700 !important; 
-    color: var(--text-color) !important;
-}
-span[data-baseweb="tag"] span { 
-    color: var(--text-color) !important; 
+/* 1. MENGHILANGKAN IKON RANTAI (ANCHOR LINKS) BAWAAN STREAMLIT */
+a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+    display: none !important;
+    visibility: hidden !important;
 }
 
-/* Background Abu-abu Permanen & Garis Merah untuk Radar */
-.radar-box { 
-    background-color: rgba(150, 150, 150, 0.15); 
-    padding: 30px; 
-    border-radius: 12px; 
-    margin-bottom: 30px; 
-    border-left: 6px solid #D32F2F;
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+/* 2. MENAMBAHKAN LOGO & TEKS DI HEADER KIRI ATAS STREAMLIT */
+[data-testid="stHeader"] {
+    background-image: url('https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w50');
+    background-repeat: no-repeat;
+    background-position: 20px center;
+    background-size: 35px;
+    background-color: transparent;
 }
+[data-testid="stHeader"]::after {
+    content: "EWS TPID Sumsel";
+    position: absolute;
+    left: 65px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-color);
+    letter-spacing: 0.5px;
+}
+
+/* 3. HERO BANNER (BACKGROUND PASAR) */
+.hero-banner {
+    background-image: linear-gradient(to right, rgba(15, 32, 60, 0.95), rgba(15, 32, 60, 0.7)), url('https://drive.google.com/uc?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E');
+    background-size: cover;
+    background-position: center 30%;
+    padding: 50px 40px;
+    border-radius: 15px;
+    margin-bottom: 40px;
+    margin-top: -20px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border-left: 8px solid #FFD700;
+}
+.hero-title {
+    margin: 0; 
+    padding: 0; 
+    line-height: 1.1; 
+    font-size: 3.5rem; 
+    color: #FFD700; 
+    font-weight: 800;
+}
+.hero-subtitle {
+    margin: 10px 0 0 0; 
+    padding: 0; 
+    color: #E0E0E0; 
+    font-size: 1.6rem; 
+    font-weight: 500;
+}
+.hero-desc {
+    font-size: 1.15rem; 
+    opacity: 0.85; 
+    margin: 15px 0 0 0; 
+    max-width: 800px; 
+    line-height: 1.6;
+}
+
+/* 4. FOOTER AMPERA BARU */
+.footer-container {
+    position: relative;
+    width: 100%;
+    margin-top: 60px;
+    padding: 40px 0 20px 0;
+    text-align: center;
+    border-top: 1px solid rgba(150, 150, 150, 0.2);
+    overflow: hidden; /* Mencegah gambar tumpah ke samping */
+}
+.footer-bg-siluet {
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 150px;
+    /* Menggunakan gambar Ampera terbaru */
+    background-image: url('https://drive.google.com/uc?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X');
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: 800px auto; /* Silakan perbesar/perkecil angka 800px sesuai selera */
+    opacity: 0.12; /* Transparansi siluet */
+    filter: grayscale(100%); /* Membuatnya menyatu elegan dengan background */
+    z-index: 0;
+    pointer-events: none;
+}
+.footer-text {
+    position: relative;
+    z-index: 1;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+/* Styling Filter Emas & Radar Box */
+span[data-baseweb="tag"] { background-color: transparent !important; border: 1.5px solid #FFD700 !important; color: var(--text-color) !important; }
+span[data-baseweb="tag"] span { color: var(--text-color) !important; }
+.radar-box { background-color: rgba(150, 150, 150, 0.15); padding: 30px; border-radius: 12px; margin-bottom: 30px; border-left: 6px solid #D32F2F; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
 </style>
 """, unsafe_allow_html=True)
 
@@ -62,16 +143,13 @@ def go_to_home():
 def get_icon(nama_komoditas):
     nama = str(nama_komoditas).lower()
     
-    # Format penamaan di Iconify: "prefix:nama-ikon"
-    # Silakan cari di https://icon-sets.iconify.design/ lalu ganti string di bawah ini
     icon_code = "mdi:package-variant-closed" # Default Icon
-    
     if 'telur' in nama: icon_code = "mdi:egg"
-    elif 'cabai rawit' in nama or 'cabe rawit' in nama: icon_code = "ph:pepper" # Update
+    elif 'cabai rawit' in nama or 'cabe rawit' in nama: icon_code = "ph:pepper"
     elif 'cabai' in nama or 'cabe' in nama: icon_code = "tabler:pepper"
     elif 'beras' in nama: icon_code = "tdesign:rice"
-    elif 'bawang merah' in nama: icon_code = "lucide-lab:onion" # Update
-    elif 'bawang putih' in nama: icon_code = "lucide-lab:garlic" # Update
+    elif 'bawang merah' in nama: icon_code = "lucide-lab:onion"
+    elif 'bawang putih' in nama: icon_code = "lucide-lab:garlic"
     elif 'ayam' in nama: icon_code = "mdi:food-drumstick"
     elif 'sapi' in nama or 'daging' in nama: icon_code = "mdi:cow"
     elif 'minyak' in nama: icon_code = "mdi:oil"
@@ -79,25 +157,14 @@ def get_icon(nama_komoditas):
     elif 'jagung' in nama: icon_code = "mdi:corn"
     elif 'kedelai' in nama: icon_code = "mdi:leaf"
 
-    # Memecah prefix dan nama ikon untuk URL API
-    try:
-        prefix, name = icon_code.split(':')
-    except:
-        prefix, name = "mdi", "box"
+    parts = icon_code.split(':')
+    prefix = parts[0]
+    name = ":".join(parts[1:])
         
     url = f"https://api.iconify.design/{prefix}/{name}.svg"
     
-    # Trik CSS Mask: SVG dijadikan topeng, warnanya mengambil dari "currentColor" teks
     html_icon = f"""
-    <span style="
-        display: inline-block; 
-        width: 1.25em; 
-        height: 1.25em; 
-        background-color: currentColor; 
-        -webkit-mask: url({url}) no-repeat center / contain; 
-        mask: url({url}) no-repeat center / contain; 
-        vertical-align: text-bottom;
-    "></span>
+    <span style="display: inline-block; width: 1.25em; height: 1.25em; background-color: currentColor; -webkit-mask: url({url}) no-repeat center / contain; mask: url({url}) no-repeat center / contain; vertical-align: text-bottom;"></span>
     """
     return html_icon
 
@@ -136,15 +203,16 @@ if not df_master.empty:
     # ==========================================
     if st.session_state.page == 'Beranda':
 
-        col_logo, col_text = st.columns([1.2, 8.8])
-        with col_logo:
-            st.markdown('<img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%; max-width: 150px; margin-top: 5px;">', unsafe_allow_html=True)
-        with col_text:
-            st.markdown("<h1 style='margin:0; padding:0; line-height: 1.1; font-size: 3.2rem;'>BI - RAJAWALI</h1>", unsafe_allow_html=True)
-            st.markdown("<h3 style='margin:0; padding:0; color: #D32F2F; margin-bottom: 8px; font-size: 1.6rem;'>Radar Gejolak Harga Waspada Inflasi</h3>", unsafe_allow_html=True)
-            st.markdown("<p style='font-size: 1.2rem; opacity: 0.85; margin:0;'>Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>", unsafe_allow_html=True)
-
-        st.divider()
+        # -------------------------------------------------------------------
+        # HERO BANNER BARU (Menggantikan header teks biasa)
+        # -------------------------------------------------------------------
+        st.markdown("""
+        <div class="hero-banner">
+            <h1 class="hero-title">BI - RAJAWALI</h1>
+            <h3 class="hero-subtitle">Radar Gejolak Harga Waspada Inflasi</h3>
+            <p class="hero-desc">Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time. Terintegrasi dengan pemodelan <i>forecasting</i> untuk pengambilan keputusan preventif.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
         # -------------------------------------------------------------------
         # RADAR FLUKTUASI HARGA
@@ -507,41 +575,9 @@ if not df_master.empty:
                                 st.error(f"Gagal mengirim email. Periksa kembali koneksi internet dan App Password Anda. Error: {e}")
 
 # ==========================================
-# FOOTER WEBSITE (Ramping & Compact)
+# FOOTER WEBSITE AMPERA BARU
 # ==========================================
 st.markdown("""
-<style>
-.footer-container {
-    position: relative;
-    width: 100%;
-    margin-top: 50px;
-    padding: 20px 0;
-    text-align: center;
-    border-top: 1px solid rgba(150, 150, 150, 0.2);
-}
-
-.footer-bg-siluet {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('https://drive.google.com/thumbnail?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk&sz=w800');
-    background-repeat: no-repeat;
-    background-position: bottom center;
-    background-size: contain;
-    opacity: 0.15; /* Siluet samar */
-    z-index: 0;
-}
-
-.footer-text {
-    position: relative;
-    z-index: 1;
-    font-size: 12px;
-    opacity: 0.8;
-}
-</style>
-
 <div class="footer-container">
     <div class="footer-bg-siluet"></div>
     <div class="footer-text">

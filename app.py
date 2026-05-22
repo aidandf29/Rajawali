@@ -22,7 +22,7 @@ st.set_page_config(
 # Styling CSS 
 st.markdown("""
 <style>
-/* Styling Filter Emas dengan penyesuaian warna teks agar terlihat di Light & Dark Mode */
+/* Styling Filter Emas */
 span[data-baseweb="tag"] { 
     background-color: transparent !important; 
     border: 1.5px solid #FFD700 !important; 
@@ -32,7 +32,7 @@ span[data-baseweb="tag"] span {
     color: var(--text-color) !important; 
 }
 
-/* Background Abu-abu Permanen & Garis Merah untuk Radar */
+/* Background Abu-abu + Siluet Ampera */
 .radar-box { 
     background-color: rgba(150, 150, 150, 0.15); 
     padding: 30px; 
@@ -40,6 +40,13 @@ span[data-baseweb="tag"] span {
     margin-bottom: 30px; 
     border-left: 6px solid #D32F2F;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+    
+    /* Properti untuk Ampera.png */
+    background-image: url('https://drive.google.com/uc?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk');
+    background-repeat: no-repeat;
+    background-position: right bottom; /* Posisi di kanan bawah radar */
+    background-size: 350px; /* Ukuran siluet, silakan atur sesuai selera */
+    background-blend-mode: overlay; /* Membuatnya menyatu dengan background */
 }
 </style>
 """, unsafe_allow_html=True)

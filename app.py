@@ -69,7 +69,7 @@ def get_icon(nama_komoditas):
     if 'telur' in nama: icon_code = "mdi:egg"
     elif 'cabai rawit' in nama or 'cabe rawit' in nama: icon_code = "ph:pepper" # Update
     elif 'cabai' in nama or 'cabe' in nama: icon_code = "tabler:pepper"
-    elif 'beras' in nama: icon_code = "mdi:bowl-rice"
+    elif 'beras' in nama: icon_code = "tdesign:rice"
     elif 'bawang merah' in nama: icon_code = "lucide-lab:onion" # Update
     elif 'bawang putih' in nama: icon_code = "lucide-lab:garlic" # Update
     elif 'ayam' in nama: icon_code = "mdi:food-drumstick"

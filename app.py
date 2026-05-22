@@ -22,69 +22,54 @@ st.set_page_config(
 # Styling CSS 
 st.markdown("""
 <style>
-/* 1. MENGHILANGKAN IKON RANTAI (ANCHOR LINKS) BAWAAN STREAMLIT */
-a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+/* 1. MENGHILANGKAN IKON RANTAI DI SEMUA HEADER */
+a.header-anchor {
     display: none !important;
     visibility: hidden !important;
 }
 
-/* 2. MENAMBAHKAN LOGO & TEKS DI HEADER KIRI ATAS STREAMLIT */
+/* 2. MENAMBAHKAN LOGO & TEKS DI HEADER BAWAAN STREAMLIT (BAR ATAS) */
 [data-testid="stHeader"] {
-    background-image: url('https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w50');
+    /* Menggunakan thumbnail bypass agar tidak error */
+    background-image: url('https://drive.google.com/thumbnail?id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk&sz=w400');
     background-repeat: no-repeat;
     background-position: 20px center;
-    background-size: 35px;
+    background-size: auto 65%; /* Mengatur tinggi logo agar pas di header */
     background-color: transparent;
 }
-[data-testid="stHeader"]::after {
-    content: "EWS TPID Sumsel";
-    position: absolute;
-    left: 65px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-weight: 700;
-    font-size: 16px;
-    color: var(--text-color);
-    letter-spacing: 0.5px;
-}
 
-/* 3. HERO BANNER (BACKGROUND PASAR) */
+/* 3. BACKGROUND PASAR UNTUK HEADER BAWAH (BANNER) */
+/* Menggunakan overlay abu-abu gelap transparan agar foto pasar terlihat tapi teks tetap terbaca */
 .hero-banner {
-    background-image: linear-gradient(to right, rgba(15, 32, 60, 0.95), rgba(15, 32, 60, 0.7)), url('https://drive.google.com/uc?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E');
+    background-image: linear-gradient(rgba(30, 30, 30, 0.75), rgba(30, 30, 30, 0.75)), url('https://drive.google.com/thumbnail?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E&sz=w1920');
     background-size: cover;
-    background-position: center 30%;
-    padding: 50px 40px;
+    background-position: center center;
+    padding: 40px;
     border-radius: 15px;
     margin-bottom: 40px;
     margin-top: -20px;
-    color: white;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    border-left: 8px solid #FFD700;
-}
-.hero-title {
-    margin: 0; 
-    padding: 0; 
-    line-height: 1.1; 
-    font-size: 3.5rem; 
-    color: #FFD700; 
-    font-weight: 800;
-}
-.hero-subtitle {
-    margin: 10px 0 0 0; 
-    padding: 0; 
-    color: #E0E0E0; 
-    font-size: 1.6rem; 
-    font-weight: 500;
-}
-.hero-desc {
-    font-size: 1.15rem; 
-    opacity: 0.85; 
-    margin: 15px 0 0 0; 
-    max-width: 800px; 
-    line-height: 1.6;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-/* 4. FOOTER AMPERA BARU */
+/* Styling Filter Emas & Radar Box */
+span[data-baseweb="tag"] { 
+    background-color: transparent !important; 
+    border: 1.5px solid #FFD700 !important; 
+    color: var(--text-color) !important;
+}
+span[data-baseweb="tag"] span { 
+    color: var(--text-color) !important; 
+}
+.radar-box { 
+    background-color: rgba(150, 150, 150, 0.15); 
+    padding: 30px; 
+    border-radius: 12px; 
+    margin-bottom: 30px; 
+    border-left: 6px solid #D32F2F;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+}
+
+/* 4. FOOTER AMPERA */
 .footer-container {
     position: relative;
     width: 100%;
@@ -92,21 +77,20 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     padding: 40px 0 20px 0;
     text-align: center;
     border-top: 1px solid rgba(150, 150, 150, 0.2);
-    overflow: hidden; /* Mencegah gambar tumpah ke samping */
+    overflow: hidden;
 }
 .footer-bg-siluet {
     position: absolute;
-    bottom: -10px;
+    bottom: -5px;
     left: 0;
     width: 100%;
     height: 150px;
-    /* Menggunakan gambar Ampera terbaru */
-    background-image: url('https://drive.google.com/uc?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X');
+    /* Menggunakan Ampera terbaru dengan bypass thumbnail */
+    background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1200');
     background-repeat: no-repeat;
     background-position: center bottom;
-    background-size: 800px auto; /* Silakan perbesar/perkecil angka 800px sesuai selera */
-    opacity: 0.12; /* Transparansi siluet */
-    filter: grayscale(100%); /* Membuatnya menyatu elegan dengan background */
+    background-size: 800px auto; 
+    opacity: 0.15; 
     z-index: 0;
     pointer-events: none;
 }
@@ -117,11 +101,6 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     font-weight: 600;
     opacity: 0.7;
 }
-
-/* Styling Filter Emas & Radar Box */
-span[data-baseweb="tag"] { background-color: transparent !important; border: 1.5px solid #FFD700 !important; color: var(--text-color) !important; }
-span[data-baseweb="tag"] span { color: var(--text-color) !important; }
-.radar-box { background-color: rgba(150, 150, 150, 0.15); padding: 30px; border-radius: 12px; margin-bottom: 30px; border-left: 6px solid #D32F2F; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
 </style>
 """, unsafe_allow_html=True)
 
@@ -204,15 +183,24 @@ if not df_master.empty:
     if st.session_state.page == 'Beranda':
 
         # -------------------------------------------------------------------
-        # HERO BANNER BARU (Menggantikan header teks biasa)
+        # HERO BANNER (KODE ASLI ANDA YANG DIBUNGKUS DALAM BANNER PASAR)
         # -------------------------------------------------------------------
         st.markdown("""
         <div class="hero-banner">
-            <h1 class="hero-title">BI - RAJAWALI</h1>
-            <h3 class="hero-subtitle">Radar Gejolak Harga Waspada Inflasi</h3>
-            <p class="hero-desc">Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time. Terintegrasi dengan pemodelan <i>forecasting</i> untuk pengambilan keputusan preventif.</p>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
+                <div style="flex: 1; min-width: 150px; max-width: 150px;">
+                    <img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%;">
+                </div>
+                <div style="flex: 8; min-width: 300px; color: white;">
+                    <h1 style='margin:0; padding:0; line-height: 1.1; font-size: 3.2rem;'>BI - RAJAWALI</h1>
+                    <h3 style='margin:0; padding:0; color: #ff6b6b; margin-bottom: 8px; font-size: 1.6rem;'>Radar Gejolak Harga Waspada Inflasi</h3>
+                    <p style='font-size: 1.2rem; opacity: 0.9; margin:0;'>Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>
+                </div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
+
+        st.divider()
 
         # -------------------------------------------------------------------
         # RADAR FLUKTUASI HARGA
@@ -575,7 +563,7 @@ if not df_master.empty:
                                 st.error(f"Gagal mengirim email. Periksa kembali koneksi internet dan App Password Anda. Error: {e}")
 
 # ==========================================
-# FOOTER WEBSITE AMPERA BARU
+# FOOTER WEBSITE (DENGAN AMPERA BARU)
 # ==========================================
 st.markdown("""
 <div class="footer-container">

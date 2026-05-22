@@ -67,11 +67,11 @@ def get_icon(nama_komoditas):
     icon_code = "mdi:package-variant-closed" # Default Icon
     
     if 'telur' in nama: icon_code = "mdi:egg"
-    elif 'cabai rawit' in nama or 'cabe rawit' in nama: icon_code = "tabler:pepper"
+    elif 'cabai rawit' in nama or 'cabe rawit' in nama: icon_code = "ph:pepper" # Update
     elif 'cabai' in nama or 'cabe' in nama: icon_code = "tabler:pepper"
     elif 'beras' in nama: icon_code = "mdi:bowl-rice"
-    elif 'bawang merah' in nama: icon_code = "mdi:onion"
-    elif 'bawang putih' in nama: icon_code = "mdi:garlic"
+    elif 'bawang merah' in nama: icon_code = "lucide-lab:onion" # Update
+    elif 'bawang putih' in nama: icon_code = "lucide-lab:garlic" # Update
     elif 'ayam' in nama: icon_code = "mdi:food-drumstick"
     elif 'sapi' in nama or 'daging' in nama: icon_code = "mdi:cow"
     elif 'minyak' in nama: icon_code = "mdi:oil"

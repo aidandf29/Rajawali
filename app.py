@@ -19,7 +19,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Integrasi FontAwesome untuk Icon Monokrom & Perbaikan CSS
+# Integrasi FontAwesome untuk Icon Monokrom
 st.markdown("""
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
@@ -42,11 +42,7 @@ span[data-baseweb="tag"] span {
     border-left: 6px solid #D32F2F;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
 }
-
-/* Trik CSS meminimalisir bug Dropdown Sticky saat di-scroll */
-div[data-testid="stSelectbox"], div[data-testid="stMultiSelect"] {
-    transform: translateZ(0); 
-}
+/* Catatan: Trik CSS sticky sebelumnya telah dihapus dari sini agar dropdown kembali normal */
 </style>
 """, unsafe_allow_html=True)
 
@@ -69,8 +65,8 @@ def get_icon(nama_komoditas):
     elif 'cabai rawit' in nama or 'cabe rawit' in nama: return '<i class="fa-solid fa-pepper-hot"></i>'
     elif 'cabai' in nama or 'cabe' in nama: return '<i class="fa-solid fa-pepper-hot"></i>'
     elif 'beras' in nama: return '<i class="fa-solid fa-bowl-rice"></i>'
-    elif 'bawang merah' in nama: return '<i class="fa-solid fa-seedling"></i>'
-    elif 'bawang putih' in nama: return '<i class="fa-solid fa-seedling"></i>'
+    elif 'bawang merah' in nama: return '<i class="fa-solid fa-droplet"></i>' # Silakan ubah class-nya jika ada yang lebih cocok
+    elif 'bawang putih' in nama: return '<i class="fa-solid fa-clover"></i>' # Silakan ubah class-nya jika ada yang lebih cocok
     elif 'ayam' in nama: return '<i class="fa-solid fa-drumstick-bite"></i>'
     elif 'sapi' in nama or 'daging' in nama: return '<i class="fa-solid fa-cow"></i>'
     elif 'minyak' in nama: return '<i class="fa-solid fa-oil-can"></i>'
@@ -485,7 +481,7 @@ if not df_master.empty:
                                 st.error(f"Gagal mengirim email. Periksa kembali koneksi internet dan App Password Anda. Error: {e}")
 
 # ==========================================
-# FOOTER WEBSITE (Update: Ramping & Compact)
+# FOOTER WEBSITE 
 # ==========================================
 st.markdown("""
 <div style='text-align: center; margin-top: 30px; padding: 10px 0; font-size: 12px; opacity: 0.6; border-top: 1px solid rgba(150, 150, 150, 0.2);'>

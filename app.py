@@ -19,16 +19,10 @@ st.set_page_config(
     layout="wide"
 )
 
-# Styling CSS 
+# Styling CSS (Mendobrak Batas Streamlit)
 st.markdown("""
 <style>
-/* 1. MENGHILANGKAN IKON RANTAI (ANCHOR LINK) STREAMLIT */
-a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
-    display: none !important;
-    visibility: hidden !important;
-}
-
-/* 2. LOGO KIRI ATAS DI HEADER BAWAAN STREAMLIT (Memakai Bypass Thumbnail) */
+/* 1. LOGO HEADER BAWAAN STREAMLIT (Kiri Atas) */
 [data-testid="stHeader"] {
     background-image: url('https://drive.google.com/thumbnail?id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk&sz=w400');
     background-repeat: no-repeat;
@@ -37,49 +31,47 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     background-color: transparent;
 }
 
-/* 3. BACKDROP PASAR (Membungkus Header & Radar) */
+/* 2. BACKDROP PASAR (Tembus Kanan Kiri & Ke Atas) */
 .top-backdrop {
-    /* Overlay gelap transparan agar foto pasar terlihat tapi teks tetap terbaca */
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -65px; /* Menarik backdrop rapat ke atas dekat header */
+    padding: 60px 10% 40px 10%; /* Padding agar konten di dalamnya tetap di tengah */
     background-image: linear-gradient(rgba(20, 25, 35, 0.85), rgba(20, 25, 35, 0.85)), url('https://drive.google.com/thumbnail?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E&sz=w1920');
     background-size: cover;
-    background-position: center;
-    padding: 40px;
-    border-radius: 15px;
-    margin-bottom: 30px;
-    color: white; /* Memaksa teks di area ini menjadi putih agar terbaca */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    background-position: center 30%;
+    color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 /* Kotak Radar Transparan di atas Backdrop Pasar */
 .radar-box-transparent {
-    background-color: rgba(255, 255, 255, 0.1); 
+    background-color: rgba(255, 255, 255, 0.08); 
     padding: 30px; 
     border-radius: 12px; 
-    margin-top: 20px;
-    border-left: 6px solid #FFD700; /* Aksen Emas */
-    backdrop-filter: blur(5px);
+    margin-top: 30px;
+    border-left: 6px solid #FFD700;
+    backdrop-filter: blur(8px);
 }
 
-/* Styling Filter Emas */
-span[data-baseweb="tag"] { 
-    background-color: transparent !important; 
-    border: 1.5px solid #FFD700 !important; 
-    color: var(--text-color) !important;
-}
-span[data-baseweb="tag"] span { 
-    color: var(--text-color) !important; 
-}
-
-/* 4. FOOTER AMPERA YANG MEMBENTANG */
+/* 3. FOOTER AMPERA (Tembus Kanan Kiri) */
 .footer-container {
+    width: 100vw;
     position: relative;
-    width: 100%;
-    height: 250px; /* Ruang tinggi agar ampera tidak gepeng */
-    margin-top: 50px;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    height: 350px; /* Dipertinggi agar Ampera terlihat utuh tidak terpotong */
+    margin-top: 60px;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    padding-bottom: 20px;
+    padding-bottom: 25px;
     border-top: 1px solid rgba(150, 150, 150, 0.2);
     overflow: hidden;
 }
@@ -89,14 +81,12 @@ span[data-baseweb="tag"] span {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Memakai Bypass Thumbnail sz=w1920 untuk kualitas HD */
     background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
     background-repeat: no-repeat;
     background-position: center bottom;
-    background-size: cover; /* Stretch dari ujung ke ujung */
-    opacity: 0.15; /* Siluet elegan */
+    background-size: 100% auto; /* Memaksa lebar 100% layar (tembus kanan kiri) */
+    opacity: 0.25; 
     z-index: 0;
-    pointer-events: none;
 }
 .footer-text {
     position: relative;
@@ -106,13 +96,18 @@ span[data-baseweb="tag"] span {
     opacity: 0.7;
 }
 
-/* Custom Subheader untuk menggantikan bawaan Streamlit agar tidak ada ikon link */
+/* Judul Kustom Pengganti st.subheader (Anti Ikon Rantai) */
 .custom-subheader {
     font-size: 1.8rem;
-    font-weight: 600;
-    margin-top: 20px;
+    font-weight: bold;
+    margin-top: 25px;
     margin-bottom: 15px;
+    color: inherit;
 }
+
+/* Styling Filter Emas */
+span[data-baseweb="tag"] { background-color: transparent !important; border: 1.5px solid #FFD700 !important; color: var(--text-color) !important; }
+span[data-baseweb="tag"] span { color: var(--text-color) !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -129,7 +124,7 @@ def go_to_home():
     st.session_state.selected_komoditas = None
 
 # ==========================================
-# FUNGSI ICONIFY (CSS MASKING API)
+# FUNGSI ICONIFY
 # ==========================================
 def get_icon(nama_komoditas):
     nama = str(nama_komoditas).lower()
@@ -151,12 +146,9 @@ def get_icon(nama_komoditas):
     parts = icon_code.split(':')
     prefix = parts[0]
     name = ":".join(parts[1:])
-        
     url = f"https://api.iconify.design/{prefix}/{name}.svg"
     
-    html_icon = f"""
-    <span style="display: inline-block; width: 1.25em; height: 1.25em; background-color: currentColor; -webkit-mask: url({url}) no-repeat center / contain; mask: url({url}) no-repeat center / contain; vertical-align: text-bottom;"></span>
-    """
+    html_icon = f"""<span style="display: inline-block; width: 1.25em; height: 1.25em; background-color: currentColor; -webkit-mask: url({url}) no-repeat center / contain; mask: url({url}) no-repeat center / contain; vertical-align: text-bottom;"></span>"""
     return html_icon
 
 # ==========================================
@@ -190,13 +182,10 @@ if not df_master.empty:
     df_global_proj = df_global_proj[df_global_proj['forecast'] > 0]
 
     # ==========================================
-    # HALAMAN 1: BERANDA (EXECUTIVE SUMMARY)
+    # HALAMAN 1: BERANDA
     # ==========================================
     if st.session_state.page == 'Beranda':
 
-        # -------------------------------------------------------------------
-        # TOP BACKDROP (Gambar Pasar yang membungkus Header & Radar)
-        # -------------------------------------------------------------------
         komoditas_bermasalah = 0
         bln_proj_terdekat_str = "-"
         if not df_global_proj.empty:
@@ -207,44 +196,42 @@ if not df_master.empty:
             
         warna_risiko = "#FF4B4B" if komoditas_bermasalah > 0 else "#21C354"
 
-        # HTML untuk Backdrop + Header + Radar
+        # PERHATIAN: Dilarang meng-indentasi kode HTML di bawah ini agar tidak jadi Code Block
         backdrop_html = f"""
-        <div class="top-backdrop">
-            <!-- Bagian Judul -->
-            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
-                <div style="flex: 1; min-width: 120px; max-width: 120px;">
-                    <img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%;">
-                </div>
-                <div style="flex: 8; min-width: 300px;">
-                    <div style='margin:0; padding:0; line-height: 1.1; font-size: 3.2rem; font-weight:bold;'>BI - RAJAWALI</div>
-                    <div style='margin:0; padding:0; color: #ff6b6b; margin-bottom: 8px; font-size: 1.6rem; font-weight:bold;'>Radar Gejolak Harga Waspada Inflasi</div>
-                    <p style='font-size: 1.2rem; opacity: 0.9; margin:0;'>Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>
-                </div>
-            </div>
+<div class="top-backdrop">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
+        <div style="flex: 1; min-width: 120px; max-width: 120px;">
+            <img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%;">
+        </div>
+        <div style="flex: 8; min-width: 300px; color: white;">
+            <div style="margin:0; padding:0; line-height: 1.1; font-size: 3.2rem; font-weight:bold;">BI - RAJAWALI</div>
+            <div style="margin:0; padding:0; color: #ff6b6b; margin-bottom: 8px; font-size: 1.6rem; font-weight:bold;">Radar Gejolak Harga Waspada Inflasi</div>
+            <p style="font-size: 1.2rem; opacity: 0.9; margin:0;">Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>
+        </div>
+    </div>
 
-            <!-- Bagian Radar Transparan -->
-            <div class="radar-box-transparent">
-                <div style="margin-top: 0; margin-bottom: 25px; font-size: 2rem; font-weight: bold;">Radar Fluktuasi Harga</div>
-                <div style="display: flex; flex-wrap: wrap; gap: 20px;">
-                    <div style="flex: 1; min-width: 200px;">
-                        <p style="margin: 0; font-size: 15px; opacity: 0.7;">Status Komoditas</p>
-                        <div style="margin: 0; font-size: 2.2rem; font-weight:bold; color: {warna_risiko};">{komoditas_bermasalah} Berisiko</div>
-                        <p style="margin: 0; font-size: 14px; opacity: 0.6;">Bulan Depan: {bln_proj_terdekat_str}</p>
-                    </div>
-                    <div style="flex: 1; min-width: 200px;">
-                        <p style="margin: 0; font-size: 15px; opacity: 0.7;">Total Pantauan</p>
-                        <div style="margin: 0; font-size: 2.2rem; font-weight:bold;">{len(list_komoditas)} Komoditas</div>
-                        <p style="margin: 0; font-size: 14px; opacity: 0.6;">Harga & Pasokan</p>
-                    </div>
-                    <div style="flex: 1; min-width: 200px;">
-                        <p style="margin: 0; font-size: 15px; opacity: 0.7;">Sistem Prediksi</p>
-                        <div style="margin: 0; font-size: 2.2rem; font-weight:bold;">Aktif 🟢</div>
-                        <p style="margin: 0; font-size: 14px; opacity: 0.6;">SARIMAX Terkalibrasi</p>
-                    </div>
-                </div>
+    <div class="radar-box-transparent">
+        <div style="margin-top: 0; margin-bottom: 25px; font-size: 2rem; font-weight: bold;">Radar Fluktuasi Harga</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+            <div style="flex: 1; min-width: 200px;">
+                <p style="margin: 0; font-size: 15px; opacity: 0.7;">Status Komoditas</p>
+                <div style="margin: 0; font-size: 2.2rem; font-weight:bold; color: {warna_risiko};">{komoditas_bermasalah} Berisiko</div>
+                <p style="margin: 0; font-size: 14px; opacity: 0.6;">Bulan Depan: {bln_proj_terdekat_str}</p>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+                <p style="margin: 0; font-size: 15px; opacity: 0.7;">Total Pantauan</p>
+                <div style="margin: 0; font-size: 2.2rem; font-weight:bold;">{len(list_komoditas)} Komoditas</div>
+                <p style="margin: 0; font-size: 14px; opacity: 0.6;">Harga & Pasokan</p>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+                <p style="margin: 0; font-size: 15px; opacity: 0.7;">Sistem Prediksi</p>
+                <div style="margin: 0; font-size: 2.2rem; font-weight:bold;">Aktif 🟢</div>
+                <p style="margin: 0; font-size: 14px; opacity: 0.6;">SARIMAX Terkalibrasi</p>
             </div>
         </div>
-        """
+    </div>
+</div>
+"""
         st.markdown(backdrop_html, unsafe_allow_html=True)
 
         komoditas_summary = []
@@ -274,7 +261,6 @@ if not df_master.empty:
                 'icon': get_icon(kom)
             })
 
-        # MENGGUNAKAN DIV CUSTOM UNTUK MENGHINDARI IKON RANTAI
         st.markdown("<div class='custom-subheader'>Papan Pantau Peringatan Dini</div>", unsafe_allow_html=True)
 
         col_s, col_f, col_so = st.columns([4, 3, 3])
@@ -333,21 +319,21 @@ if not df_master.empty:
                 warna_inflasi = "red" if delta_n1 > 0 else "green"
                 tanda_inflasi = "▲" if delta_n1 > 0 else "▼" if delta_n1 < 0 else "-"
 
+                # PERHATIAN: Penulisan di garis tepi kiri agar tidak jadi Code Block
                 card_html = f"""
-                <div style="position: relative; overflow: hidden; border: 2px solid {warna_border}; border-radius: 10px; padding: 15px; background-color: {warna_bg}; margin-bottom: 10px; color: inherit;">
-                    <div style="position: relative; z-index: 1;">
-                        <div style="font-size: 1.15rem; font-weight: bold; margin-top:0px; margin-bottom:10px; color: inherit; display:flex; align-items:center; gap:8px;">
-                            {icon} {kom}
-                        </div>
-                        <p style="margin:0px; font-size:15px; color: inherit;">Harga Saat Ini: <b>Rp {harga_n:,.0f}</b></p>
-                        <p style="margin:0px; font-size:15px; color: inherit;">Prediksi (N+1): <b>Rp {harga_n1:,.0f}</b></p>
-                        <p style="margin-top:5px; margin-bottom:0px; font-size:18px; font-weight:bold; color:{warna_inflasi};">{tanda_inflasi} {delta_n1:+.2f}%</p>
-                        <hr style="margin: 10px 0px; border-color: {warna_border}; opacity: 0.3;">
-                        <p style="margin:0px; font-size:14px; font-weight:bold; color:{warna_border};">Status: {status_k}</p>
-                    </div>
-                </div>
-                """
-
+<div style="position: relative; overflow: hidden; border: 2px solid {warna_border}; border-radius: 10px; padding: 15px; background-color: {warna_bg}; margin-bottom: 10px; color: inherit;">
+    <div style="position: relative; z-index: 1;">
+        <div style="font-size: 1.15rem; font-weight: bold; margin-top:0px; margin-bottom:10px; color: inherit; display:flex; align-items:center; gap:8px;">
+            {icon} {kom}
+        </div>
+        <p style="margin:0px; font-size:15px; color: inherit;">Harga Saat Ini: <b>Rp {harga_n:,.0f}</b></p>
+        <p style="margin:0px; font-size:15px; color: inherit;">Prediksi (N+1): <b>Rp {harga_n1:,.0f}</b></p>
+        <p style="margin-top:5px; margin-bottom:0px; font-size:18px; font-weight:bold; color:{warna_inflasi};">{tanda_inflasi} {delta_n1:+.2f}%</p>
+        <hr style="margin: 10px 0px; border-color: {warna_border}; opacity: 0.3;">
+        <p style="margin:0px; font-size:14px; font-weight:bold; color:{warna_border};">Status: {status_k}</p>
+    </div>
+</div>
+"""
                 with cols[idx % 4]:
                     st.markdown(card_html, unsafe_allow_html=True)
                     st.button("Lihat Analisis", key=f"btn_{kom}", on_click=go_to_detail, args=(kom,), use_container_width=True)
@@ -403,7 +389,6 @@ if not df_master.empty:
         col4.metric("Tingkat Akurasi", f"{akurasi:.2f}%", "Akurasi Historis")
         st.divider()
 
-        # MENGGUNAKAN DIV CUSTOM UNTUK MENGHINDARI IKON RANTAI
         st.markdown("<div class='custom-subheader'>Tren Harga & Proyeksi Interval Risiko</div>", unsafe_allow_html=True)
         
         fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -436,7 +421,6 @@ if not df_master.empty:
         col_mit, col_email = st.columns([1.2, 1])
 
         with col_mit:
-            # MENGGUNAKAN DIV CUSTOM UNTUK MENGHINDARI IKON RANTAI
             st.markdown("<div class='custom-subheader' style='margin-top:0;'>Rekomendasi Kebijakan</div>", unsafe_allow_html=True)
 
             worst_status = "aman"
@@ -557,7 +541,7 @@ if not df_master.empty:
                                 st.error(f"Gagal mengirim email. Periksa kembali koneksi internet dan App Password Anda. Error: {e}")
 
 # ==========================================
-# FOOTER WEBSITE (DENGAN AMPERA BARU)
+# FOOTER WEBSITE (DENGAN AMPERA TEMBUS KANAN-KIRI)
 # ==========================================
 st.markdown("""
 <div class="footer-container">

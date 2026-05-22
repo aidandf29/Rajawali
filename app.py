@@ -157,7 +157,7 @@ if not df_master.empty:
             "cabai rawit": "https://drive.google.com/thumbnail?id=12AvNJA9f20B64DrRp1rmpMLecrLvDxHa&sz=w800",
             "telur ayam": "https://drive.google.com/thumbnail?id=1uFGm8hueEjZp0fmc23uSdUmUc4E9F95P&sz=w800",
             "daging ayam": "https://drive.google.com/thumbnail?id=1koQ53csAw90x11A_kq6M513oDmI8vaU7&sz=w800",
-            "daging sapi": "https://drive.google.com/thumbnail?id=1jLWp5gR6dUH6pp7CcIFYDQmi-24rSjLK&sz=w800",
+            "daging sapi": "https://drive.google.com/thumbnail?id=1JB9BDUIotFHaSu54RCEKFmH-BICSyola&sz=w800",
             "bawang putih": "https://drive.google.com/thumbnail?id=1DX-EKXX-2ugC9i60xWAqT8KbiQHrWVQW&sz=w800",
             "bawang merah": "https://drive.google.com/thumbnail?id=1jgF0fysWvYAzgidQrZTvhE2NfrTkPL9e&sz=w800",
             "gula pasir": "https://drive.google.com/thumbnail?id=1IBT08J_OzlGmx8MCko1kCh_-5WCxC5uR&sz=w800",
@@ -275,7 +275,6 @@ if not df_master.empty:
     # HALAMAN 2: DETAIL KOMODITAS
     # ==========================================
     elif st.session_state.page == 'Detail':
-
         komoditas = st.session_state.selected_komoditas
         icon_detail = get_icon(komoditas)
 

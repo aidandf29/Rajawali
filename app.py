@@ -43,7 +43,7 @@ span[data-baseweb="tag"] span {
     
     /* Konfigurasi Ampera.png sebagai siluet terbentang */
     background-image: linear-gradient(rgba(150, 150, 150, 0.8), rgba(150, 150, 150, 0.8)), 
-                      url('https://drive.google.com/uc?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk');
+                      url('https://drive.google.com/thumbnail?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk&sz=w800');
     background-repeat: no-repeat;
     background-position: bottom right; /* Siluet akan menyesuaikan dari pojok bawah kanan */
     background-size: 100% auto; /* Stretch lebar 100%, tinggi proporsional */

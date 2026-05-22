@@ -19,10 +19,22 @@ st.set_page_config(
     layout="wide"
 )
 
+# CSS Termasuk Import Google Material Icons untuk Icon Monochrome Adaptif
 st.markdown("""
 <style>
-/* Styling Filter Emas */
-span[data-baseweb="tag"] { background-color: transparent !important; border: 1.5px solid #FFD700 !important; }
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0');
+
+/* Styling Filter Adaptif */
+span[data-baseweb="tag"] { 
+    background-color: var(--secondary-background-color) !important; 
+    border: 1.5px solid var(--text-color) !important; 
+}
+span[data-baseweb="tag"] span { 
+    color: var(--text-color) !important; 
+}
+span[data-baseweb="tag"] svg { 
+    fill: var(--text-color) !important; 
+}
 
 /* Background Abu-abu Permanen & Garis Merah untuk Radar */
 .radar-box { 
@@ -32,6 +44,12 @@ span[data-baseweb="tag"] { background-color: transparent !important; border: 1.5
     margin-bottom: 30px; 
     border-left: 6px solid #D32F2F;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Base style untuk Icon Material */
+.material-symbols-rounded {
+    vertical-align: middle;
+    color: var(--text-color);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -48,21 +66,22 @@ def go_to_home():
     st.session_state.page = 'Beranda'
     st.session_state.selected_komoditas = None
 
+# Mengganti Emoji dengan ID Google Material Icons
 def get_icon(nama_komoditas):
     nama = str(nama_komoditas).lower()
-    if 'telur' in nama: return '🥚'
-    elif 'cabai rawit' in nama or 'cabe rawit' in nama: return '🔥'
-    elif 'cabai' in nama or 'cabe' in nama: return '🌶️'
-    elif 'beras' in nama: return '🍚'
-    elif 'bawang merah' in nama: return '🧅'
-    elif 'bawang putih' in nama: return '🧄'
-    elif 'ayam' in nama: return '🍗'
-    elif 'sapi' in nama or 'daging' in nama: return '🥩'
-    elif 'minyak' in nama: return '🍳'
-    elif 'gula' in nama: return '🧂'
-    elif 'jagung' in nama: return '🌽'
-    elif 'kedelai' in nama: return '🫘'
-    return '🌾'
+    if 'telur' in nama: return 'egg'
+    elif 'cabai rawit' in nama or 'cabe rawit' in nama: return 'local_fire_department'
+    elif 'cabai' in nama or 'cabe' in nama: return 'eco'
+    elif 'beras' in nama: return 'rice_bowl'
+    elif 'bawang merah' in nama: return 'spa'
+    elif 'bawang putih' in nama: return 'lens_blur'
+    elif 'ayam' in nama: return 'set_meal'
+    elif 'sapi' in nama or 'daging' in nama: return 'restaurant'
+    elif 'minyak' in nama: return 'water_drop'
+    elif 'gula' in nama: return 'kitchen'
+    elif 'jagung' in nama: return 'grass'
+    elif 'kedelai' in nama: return 'grain'
+    return 'category'
 
 # ==========================================
 # 1. LOAD DATA SOURCE
@@ -104,10 +123,8 @@ if not df_master.empty:
         # -------------------------------------------------------------------
         col_logo, col_text = st.columns([1.2, 8.8])
         with col_logo:
-            # Logo diperbesar agar mengimbangi tinggi teks
             st.markdown('<img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%; max-width: 150px; margin-top: 5px;">', unsafe_allow_html=True)
         with col_text:
-            # Teks diperbesar dan disesuaikan kerapatannya
             st.markdown("<h1 style='margin:0; padding:0; line-height: 1.1; font-size: 3.2rem;'>BI - RAJAWALI</h1>", unsafe_allow_html=True)
             st.markdown("<h3 style='margin:0; padding:0; color: #D32F2F; margin-bottom: 8px; font-size: 1.6rem;'>Radar Gejolak Harga Waspada Inflasi</h3>", unsafe_allow_html=True)
             st.markdown("<p style='font-size: 1.2rem; opacity: 0.85; margin:0;'>Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>", unsafe_allow_html=True)
@@ -115,7 +132,7 @@ if not df_master.empty:
         st.divider()
 
         # -------------------------------------------------------------------
-        # RADAR KETAHANAN PANGAN DENGAN BACKGROUND ABU-ABU
+        # RADAR FLUKTUASI HARGA DENGAN BACKGROUND ABU-ABU
         # -------------------------------------------------------------------
         komoditas_bermasalah = 0
         bln_proj_terdekat_str = "-"
@@ -129,10 +146,10 @@ if not df_master.empty:
 
         radar_html = f"""
         <div class="radar-box">
-            <h2 style="margin-top: 0; margin-bottom: 25px;">Radar Ketahanan Pangan</h2>
+            <h2 style="margin-top: 0; margin-bottom: 25px;">Radar Fluktuasi Harga</h2>
             <div style="display: flex; flex-wrap: wrap; gap: 20px;">
                 <div style="flex: 1; min-width: 200px;">
-                    <p style="margin: 0; font-size: 15px; opacity: 0.7;">Status Global</p>
+                    <p style="margin: 0; font-size: 15px; opacity: 0.7;">Status Komoditas</p>
                     <h2 style="margin: 0; font-size: 2.2rem; color: {warna_risiko};">{komoditas_bermasalah} Berisiko</h2>
                     <p style="margin: 0; font-size: 14px; opacity: 0.6;">Bulan Depan: {bln_proj_terdekat_str}</p>
                 </div>
@@ -161,7 +178,7 @@ if not df_master.empty:
             "bawang putih": "https://drive.google.com/thumbnail?id=1DX-EKXX-2ugC9i60xWAqT8KbiQHrWVQW&sz=w800",
             "bawang merah": "https://drive.google.com/thumbnail?id=1jgF0fysWvYAzgidQrZTvhE2NfrTkPL9e&sz=w800",
             "gula pasir": "https://drive.google.com/thumbnail?id=1IBT08J_OzlGmx8MCko1kCh_-5WCxC5uR&sz=w800",
-            "minyak goreng": "https://drive.google.com/thumbnail?id=154WnytfQKYGNHoJpk_SAoOS4oQHI04vd&sz=w800"
+            "minyak goreng": "https://drive.google.com/thumbnail?id=16v_ASoABYlIlkuwxUS4mDA0MP0NlYp6X&sz=w800"
         }
 
         komoditas_summary = []
@@ -250,17 +267,18 @@ if not df_master.empty:
                 tanda_inflasi = "▲" if delta_n1 > 0 else "▼" if delta_n1 < 0 else "-"
 
                 link_foto = kamus_foto.get(str(kom).lower(), "")
-                # Lebar fade gambar diubah menjadi 45% (width: 45%;)
                 img_tag = f'<img src="{link_foto}" style="position: absolute; right: 0; top: 0; height: 100%; width: 45%; object-fit: cover; object-position: right center; opacity: 0.25; z-index: 0; -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 80%); mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 80%);">' if link_foto else ''
 
                 card_html = f"""
                 <div style="position: relative; overflow: hidden; border: 2px solid {warna_border}; border-radius: 10px; padding: 15px; background-color: {warna_bg}; margin-bottom: 10px; color: inherit;">
                     {img_tag}
                     <div style="position: relative; z-index: 1;">
-                        <div style="font-size: 1.15rem; font-weight: bold; margin-top:0px; margin-bottom:10px; color: inherit;">{icon} {kom}</div>
+                        <div style="font-size: 1.15rem; font-weight: bold; margin-top:0px; margin-bottom:10px; color: inherit; display: flex; align-items: center; gap: 8px;">
+                            <span class="material-symbols-rounded">{icon}</span> {kom}
+                        </div>
                         <p style="margin:0px; font-size:14px; color: inherit;">Harga Saat Ini: <b>Rp {harga_n:,.0f}</b></p>
                         <p style="margin:0px; font-size:14px; color: inherit;">Prediksi (N+1): <b>Rp {harga_n1:,.0f}</b></p>
-                        <p style="margin:0px; font-size:14px; font-weight:bold; color:{warna_inflasi};">{tanda_inflasi} {delta_n1:+.2f}% <span style="font-size:12px; font-weight:normal; color:gray;">(vs Bulan Ini)</span></p>
+                        <p style="margin:0px; font-size:18px; font-weight:bold; color:{warna_inflasi};">{tanda_inflasi} {delta_n1:+.2f}%</p>
                         <hr style="margin: 10px 0px; border-color: {warna_border}; opacity: 0.3;">
                         <p style="margin:0px; font-size:14px; font-weight:bold; color:{warna_border};">Status: {status_k}</p>
                     </div>
@@ -282,7 +300,7 @@ if not df_master.empty:
         with col_b1:
             st.button("Kembali", on_click=go_to_home, type="secondary", use_container_width=True)
         with col_b2:
-            st.markdown(f"<div style='font-size:2rem; font-weight:bold; margin-top:-5px; color:inherit;'>{icon_detail} Analisis Detail EWS: {komoditas}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='font-size:2rem; font-weight:bold; margin-top:-5px; color:inherit; display: flex; align-items: center; gap: 10px;'><span class='material-symbols-rounded' style='font-size: 2.5rem;'>{icon_detail}</span> Analisis Detail EWS: {komoditas}</div>", unsafe_allow_html=True)
 
         df_filtered = df_master[df_master[col_komoditas] == komoditas].copy().sort_values('bulan_tahun')
         df_hist = df_filtered[df_filtered['actual'] > 0].copy()
@@ -472,3 +490,12 @@ if not df_master.empty:
                                 st.success("Sukses! Instruksi darurat telah disiarkan ke seluruh email Tim TPID.")
                             except Exception as e:
                                 st.error(f"Gagal mengirim email. Periksa kembali koneksi internet dan App Password Anda. Error: {e}")
+
+# ==========================================
+# FOOTER (Muncul di semua halaman)
+# ==========================================
+st.markdown("""
+<div style="text-align: center; margin-top: 50px; padding: 20px; color: var(--text-color); opacity: 0.6; font-size: 14px; border-top: 1px solid rgba(150, 150, 150, 0.2);">
+    &copy; 2024 Kelompok 2 PCPM 40 - Bank Indonesia
+</div>
+""", unsafe_allow_html=True)

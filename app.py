@@ -19,9 +19,8 @@ st.set_page_config(
     layout="wide"
 )
 
-# Integrasi FontAwesome untuk Icon Monokrom
+# Styling CSS 
 st.markdown("""
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 /* Styling Filter Emas dengan penyesuaian warna teks agar terlihat di Light & Dark Mode */
 span[data-baseweb="tag"] { 
@@ -57,22 +56,50 @@ def go_to_home():
     st.session_state.page = 'Beranda'
     st.session_state.selected_komoditas = None
 
-# Mengganti Emoji dengan Icon FontAwesome yang elegan dan responsif terhadap tema
+# ==========================================
+# FUNGSI ICONIFY (CSS MASKING API)
+# ==========================================
 def get_icon(nama_komoditas):
     nama = str(nama_komoditas).lower()
-    if 'telur' in nama: return '<i class="fa-solid fa-egg"></i>'
-    elif 'cabai rawit' in nama or 'cabe rawit' in nama: return '<i class="fa-solid fa-pepper-hot"></i>'
-    elif 'cabai' in nama or 'cabe' in nama: return '<i class="fa-solid fa-pepper-hot"></i>'
-    elif 'beras' in nama: return '<i class="fa-solid fa-bowl-rice"></i>'
-    elif 'bawang merah' in nama: return '<i class="fa-solid fa-droplet"></i>' # Silakan ubah class-nya jika ada yang lebih cocok
-    elif 'bawang putih' in nama: return '<i class="fa-solid fa-clover"></i>' # Silakan ubah class-nya jika ada yang lebih cocok
-    elif 'ayam' in nama: return '<i class="fa-solid fa-drumstick-bite"></i>'
-    elif 'sapi' in nama or 'daging' in nama: return '<i class="fa-solid fa-cow"></i>'
-    elif 'minyak' in nama: return '<i class="fa-solid fa-oil-can"></i>'
-    elif 'gula' in nama: return '<i class="fa-solid fa-cube"></i>'
-    elif 'jagung' in nama: return '<i class="fa-solid fa-wheat-awn"></i>'
-    elif 'kedelai' in nama: return '<i class="fa-solid fa-leaf"></i>'
-    return '<i class="fa-solid fa-box"></i>'
+    
+    # Format penamaan di Iconify: "prefix:nama-ikon"
+    # Silakan cari di https://icon-sets.iconify.design/ lalu ganti string di bawah ini
+    icon_code = "mdi:package-variant-closed" # Default Icon
+    
+    if 'telur' in nama: icon_code = "mdi:egg"
+    elif 'cabai rawit' in nama or 'cabe rawit' in nama: icon_code = "tabler:pepper"
+    elif 'cabai' in nama or 'cabe' in nama: icon_code = "tabler:pepper"
+    elif 'beras' in nama: icon_code = "mdi:bowl-rice"
+    elif 'bawang merah' in nama: icon_code = "mdi:onion"
+    elif 'bawang putih' in nama: icon_code = "mdi:garlic"
+    elif 'ayam' in nama: icon_code = "mdi:food-drumstick"
+    elif 'sapi' in nama or 'daging' in nama: icon_code = "mdi:cow"
+    elif 'minyak' in nama: icon_code = "mdi:oil"
+    elif 'gula' in nama: icon_code = "mdi:cube-outline"
+    elif 'jagung' in nama: icon_code = "mdi:corn"
+    elif 'kedelai' in nama: icon_code = "mdi:leaf"
+
+    # Memecah prefix dan nama ikon untuk URL API
+    try:
+        prefix, name = icon_code.split(':')
+    except:
+        prefix, name = "mdi", "box"
+        
+    url = f"https://api.iconify.design/{prefix}/{name}.svg"
+    
+    # Trik CSS Mask: SVG dijadikan topeng, warnanya mengambil dari "currentColor" teks
+    html_icon = f"""
+    <span style="
+        display: inline-block; 
+        width: 1.25em; 
+        height: 1.25em; 
+        background-color: currentColor; 
+        -webkit-mask: url({url}) no-repeat center / contain; 
+        mask: url({url}) no-repeat center / contain; 
+        vertical-align: text-bottom;
+    "></span>
+    """
+    return html_icon
 
 # ==========================================
 # 1. LOAD DATA SOURCE
@@ -262,7 +289,7 @@ if not df_master.empty:
                     {img_tag}
                     <div style="position: relative; z-index: 1;">
                         <div style="font-size: 1.15rem; font-weight: bold; margin-top:0px; margin-bottom:10px; color: inherit; display:flex; align-items:center; gap:8px;">
-                            <span style="font-size: 1.3rem;">{icon}</span> {kom}
+                            {icon} {kom}
                         </div>
                         <p style="margin:0px; font-size:15px; color: inherit;">Harga Saat Ini: <b>Rp {harga_n:,.0f}</b></p>
                         <p style="margin:0px; font-size:15px; color: inherit;">Prediksi (N+1): <b>Rp {harga_n1:,.0f}</b></p>
@@ -288,7 +315,7 @@ if not df_master.empty:
         with col_b1:
             st.button("Kembali", on_click=go_to_home, type="secondary", use_container_width=True)
         with col_b2:
-            st.markdown(f"<div style='font-size:2rem; font-weight:bold; margin-top:-5px; color:inherit; display:flex; align-items:center; gap:12px;'><span>{icon_detail}</span> Analisis Detail EWS: {komoditas}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='font-size:2rem; font-weight:bold; margin-top:-5px; color:inherit; display:flex; align-items:center; gap:12px;'>{icon_detail} Analisis Detail EWS: {komoditas}</div>", unsafe_allow_html=True)
 
         df_filtered = df_master[df_master[col_komoditas] == komoditas].copy().sort_values('bulan_tahun')
         df_hist = df_filtered[df_filtered['actual'] > 0].copy()
@@ -480,7 +507,7 @@ if not df_master.empty:
                                 st.error(f"Gagal mengirim email. Periksa kembali koneksi internet dan App Password Anda. Error: {e}")
 
 # ==========================================
-# FOOTER WEBSITE
+# FOOTER WEBSITE (Ramping & Compact)
 # ==========================================
 st.markdown("""
 <div style='text-align: center; margin-top: 30px; padding: 10px 0; font-size: 12px; opacity: 0.6; border-top: 1px solid rgba(150, 150, 150, 0.2);'>

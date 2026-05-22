@@ -79,6 +79,12 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     margin-left: -50vw;
     margin-right: -50vw;
     margin-top: 60px;
+    padding: 16px 0;
+    text-align: center;
+    border-top: 1px solid rgba(150, 150, 150, 0.2);
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.7;
 }
 
 .footer-text-bar {
@@ -584,8 +590,6 @@ if not df_master.empty:
 # ==========================================
 st.markdown("""
 <div class="footer-wrapper">
-    <div class="footer-text-bar">
-        &copy; 2026 Kelompok 2 PCPM 40 - Bank Indonesia
-    </div>
+    &copy; 2026 Kelompok 2 Kelas C PCPM 40 - Bank Indonesia
 </div>
 """, unsafe_allow_html=True)

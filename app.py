@@ -42,7 +42,7 @@ span[data-baseweb="tag"] span {
     box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
     
     /* Properti untuk Ampera.png */
-    background-image: url('https://drive.google.com/uc?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk');
+    background-image: url('https://drive.google.com/thumbnail?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk&sz=w800');
     background-repeat: no-repeat;
     background-position: right bottom; /* Posisi di kanan bawah radar */
     background-size: 350px; /* Ukuran siluet, silakan atur sesuai selera */
@@ -531,8 +531,8 @@ st.markdown("""
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 500%;
+    height: 500%;
     background-image: url('https://drive.google.com/thumbnail?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk&sz=w800');
     background-repeat: no-repeat;
     background-position: bottom center;

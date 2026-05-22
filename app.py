@@ -78,7 +78,7 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    height: 350px; 
+    height: 400px;
     margin-top: 60px;
     display: flex;
     align-items: flex-end;
@@ -96,10 +96,10 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
     background-repeat: no-repeat;
     background-position: bottom center;
-    background-size: 100% auto; /* Memaksa lebar 100% tanpa zoom in terpotong */
-    filter: brightness(0) invert(0.5); /* Mengubah foto menjadi siluet abu-abu solid */
-    opacity: 0.15; /* Transparansi siluet */
-    transform: translateY(25%); /* Menggeser posisi foto ke bawah 25% */
+    background-size: contain;
+    filter: brightness(0) invert(0.5);
+    opacity: 0.15;
+    transform: translateY(0%);
     z-index: 0;
     pointer-events: none;
 }

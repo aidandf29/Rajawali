@@ -22,75 +22,66 @@ st.set_page_config(
 # Styling CSS 
 st.markdown("""
 <style>
-/* 1. MENGHILANGKAN IKON RANTAI DI SEMUA HEADER */
-a.header-anchor {
-    display: none !important;
-    visibility: hidden !important;
+/* 1. KONTROL PADDING STREAMLIT AGAR BANNER BISA NAIK KE ATAS */
+.block-container {
+    padding-top: 2rem !important; 
+    padding-bottom: 0rem !important;
 }
 
-/* 2. MENAMBAHKAN LOGO & TEKS DI HEADER BAWAAN STREAMLIT (BAR ATAS) */
+/* 2. LOGO HEADER BAWAAN STREAMLIT (KIRI ATAS) */
 [data-testid="stHeader"] {
-    /* Menggunakan thumbnail bypass agar tidak error */
-    background-image: url('https://drive.google.com/thumbnail?id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk&sz=w400');
+    background-image: url('https://drive.google.com/uc?id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk');
     background-repeat: no-repeat;
     background-position: 20px center;
-    background-size: auto 65%; /* Mengatur tinggi logo agar pas di header */
+    background-size: auto 65%;
     background-color: transparent;
 }
 
-/* 3. BACKGROUND PASAR UNTUK HEADER BAWAH (BANNER) */
-/* Menggunakan overlay abu-abu gelap transparan agar foto pasar terlihat tapi teks tetap terbaca */
+/* 3. HERO BANNER (GAMBAR PASAR MENYENTUH BATAS) */
 .hero-banner {
-    background-image: linear-gradient(rgba(30, 30, 30, 0.75), rgba(30, 30, 30, 0.75)), url('https://drive.google.com/thumbnail?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E&sz=w1920');
+    background-image: linear-gradient(rgba(20, 25, 35, 0.8), rgba(20, 25, 35, 0.8)), url('https://drive.google.com/uc?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E');
     background-size: cover;
     background-position: center center;
-    padding: 40px;
-    border-radius: 15px;
+    padding: 50px 40px;
+    border-radius: 10px;
+    /* Margin negatif agar gambar mendobrak batas container bawaan Streamlit */
+    margin-top: -15px; 
+    margin-left: -20px;
+    margin-right: -20px;
     margin-bottom: 40px;
-    margin-top: -20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
 /* Styling Filter Emas & Radar Box */
-span[data-baseweb="tag"] { 
-    background-color: transparent !important; 
-    border: 1.5px solid #FFD700 !important; 
-    color: var(--text-color) !important;
-}
-span[data-baseweb="tag"] span { 
-    color: var(--text-color) !important; 
-}
-.radar-box { 
-    background-color: rgba(150, 150, 150, 0.15); 
-    padding: 30px; 
-    border-radius: 12px; 
-    margin-bottom: 30px; 
-    border-left: 6px solid #D32F2F;
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-}
+span[data-baseweb="tag"] { background-color: transparent !important; border: 1.5px solid #FFD700 !important; color: var(--text-color) !important; }
+span[data-baseweb="tag"] span { color: var(--text-color) !important; }
+.radar-box { background-color: rgba(150, 150, 150, 0.15); padding: 30px; border-radius: 12px; margin-bottom: 30px; border-left: 6px solid #D32F2F; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
 
-/* 4. FOOTER AMPERA */
+/* 4. FOOTER AMPERA YANG STRETCH (MEMBENTANG) */
 .footer-container {
     position: relative;
     width: 100%;
-    margin-top: 60px;
-    padding: 40px 0 20px 0;
-    text-align: center;
+    height: 250px; /* Diberikan ruang tinggi agar ampera tidak gepeng/terpotong */
+    margin-top: 50px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 25px;
     border-top: 1px solid rgba(150, 150, 150, 0.2);
-    overflow: hidden;
 }
 .footer-bg-siluet {
     position: absolute;
-    bottom: -5px;
+    bottom: 0;
     left: 0;
     width: 100%;
-    height: 150px;
-    /* Menggunakan Ampera terbaru dengan bypass thumbnail */
-    background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1200');
+    height: 100%;
+    /* Memanggil gambar Ampera via uc?id agar ukuran aslinya tertangkap */
+    background-image: url('https://drive.google.com/uc?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X');
     background-repeat: no-repeat;
     background-position: center bottom;
-    background-size: 800px auto; 
-    opacity: 0.15; 
+    background-size: cover; /* Memaksa gambar melebar dari ujung ke ujung */
+    opacity: 0.12; 
+    filter: grayscale(100%); /* Menyamarkan grid transparansi palsu bawaan foto */
     z-index: 0;
     pointer-events: none;
 }
@@ -100,6 +91,14 @@ span[data-baseweb="tag"] span {
     font-size: 13px;
     font-weight: 600;
     opacity: 0.7;
+}
+
+/* CSS untuk Judul Custom Pengganti st.subheader */
+.custom-subheader {
+    font-size: 1.7rem;
+    font-weight: 600;
+    margin-top: 20px;
+    margin-bottom: 15px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -122,7 +121,7 @@ def go_to_home():
 def get_icon(nama_komoditas):
     nama = str(nama_komoditas).lower()
     
-    icon_code = "mdi:package-variant-closed" # Default Icon
+    icon_code = "mdi:package-variant-closed" 
     if 'telur' in nama: icon_code = "mdi:egg"
     elif 'cabai rawit' in nama or 'cabe rawit' in nama: icon_code = "ph:pepper"
     elif 'cabai' in nama or 'cabe' in nama: icon_code = "tabler:pepper"
@@ -182,9 +181,7 @@ if not df_master.empty:
     # ==========================================
     if st.session_state.page == 'Beranda':
 
-        # -------------------------------------------------------------------
-        # HERO BANNER (KODE ASLI ANDA YANG DIBUNGKUS DALAM BANNER PASAR)
-        # -------------------------------------------------------------------
+        # HERO BANNER TEXT (Tidak menggunakan st.header agar bersih dari link rantai)
         st.markdown("""
         <div class="hero-banner">
             <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
@@ -192,8 +189,8 @@ if not df_master.empty:
                     <img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%;">
                 </div>
                 <div style="flex: 8; min-width: 300px; color: white;">
-                    <h1 style='margin:0; padding:0; line-height: 1.1; font-size: 3.2rem;'>BI - RAJAWALI</h1>
-                    <h3 style='margin:0; padding:0; color: #ff6b6b; margin-bottom: 8px; font-size: 1.6rem;'>Radar Gejolak Harga Waspada Inflasi</h3>
+                    <div style='margin:0; padding:0; line-height: 1.1; font-size: 3.2rem; font-weight:bold;'>BI - RAJAWALI</div>
+                    <div style='margin:0; padding:0; color: #ff6b6b; margin-bottom: 8px; font-size: 1.6rem; font-weight:bold;'>Radar Gejolak Harga Waspada Inflasi</div>
                     <p style='font-size: 1.2rem; opacity: 0.9; margin:0;'>Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>
                 </div>
             </div>
@@ -202,9 +199,7 @@ if not df_master.empty:
 
         st.divider()
 
-        # -------------------------------------------------------------------
         # RADAR FLUKTUASI HARGA
-        # -------------------------------------------------------------------
         komoditas_bermasalah = 0
         bln_proj_terdekat_str = "-"
         if not df_global_proj.empty:
@@ -217,40 +212,27 @@ if not df_master.empty:
 
         radar_html = f"""
         <div class="radar-box">
-            <h2 style="margin-top: 0; margin-bottom: 25px;">Radar Fluktuasi Harga</h2>
+            <div style="margin-top: 0; margin-bottom: 25px; font-size: 2rem; font-weight: bold;">Radar Fluktuasi Harga</div>
             <div style="display: flex; flex-wrap: wrap; gap: 20px;">
                 <div style="flex: 1; min-width: 200px;">
                     <p style="margin: 0; font-size: 15px; opacity: 0.7;">Status Komoditas</p>
-                    <h2 style="margin: 0; font-size: 2.2rem; color: {warna_risiko};">{komoditas_bermasalah} Berisiko</h2>
+                    <div style="margin: 0; font-size: 2.2rem; font-weight:bold; color: {warna_risiko};">{komoditas_bermasalah} Berisiko</div>
                     <p style="margin: 0; font-size: 14px; opacity: 0.6;">Bulan Depan: {bln_proj_terdekat_str}</p>
                 </div>
                 <div style="flex: 1; min-width: 200px;">
                     <p style="margin: 0; font-size: 15px; opacity: 0.7;">Total Pantauan</p>
-                    <h2 style="margin: 0; font-size: 2.2rem;">{len(list_komoditas)} Komoditas</h2>
+                    <div style="margin: 0; font-size: 2.2rem; font-weight:bold;">{len(list_komoditas)} Komoditas</div>
                     <p style="margin: 0; font-size: 14px; opacity: 0.6;">Harga & Pasokan</p>
                 </div>
                 <div style="flex: 1; min-width: 200px;">
                     <p style="margin: 0; font-size: 15px; opacity: 0.7;">Sistem Prediksi</p>
-                    <h2 style="margin: 0; font-size: 2.2rem;">Aktif 🟢</h2>
+                    <div style="margin: 0; font-size: 2.2rem; font-weight:bold;">Aktif 🟢</div>
                     <p style="margin: 0; font-size: 14px; opacity: 0.6;">SARIMAX Terkalibrasi</p>
                 </div>
             </div>
         </div>
         """
         st.markdown(radar_html, unsafe_allow_html=True)
-
-        kamus_foto = {
-            "beras": "https://drive.google.com/thumbnail?id=1u-NKeYa2kDo8EWvIsqWqk3YmE38D6mi1&sz=w800",
-            "cabai merah": "https://drive.google.com/thumbnail?id=1SxPyn-4Ib8nsn4-bdbR3S8jxAeqj3paN&sz=w800",
-            "cabai rawit": "https://drive.google.com/thumbnail?id=12AvNJA9f20B64DrRp1rmpMLecrLvDxHa&sz=w800",
-            "telur ayam": "https://drive.google.com/thumbnail?id=1uFGm8hueEjZp0fmc23uSdUmUc4E9F95P&sz=w800",
-            "daging ayam": "https://drive.google.com/thumbnail?id=1koQ53csAw90x11A_kq6M513oDmI8vaU7&sz=w800",
-            "daging sapi": "https://drive.google.com/thumbnail?id=1JB9BDUIotFHaSu54RCEKFmH-BICSyola&sz=w800",
-            "bawang putih": "https://drive.google.com/thumbnail?id=1DX-EKXX-2ugC9i60xWAqT8KbiQHrWVQW&sz=w800",
-            "bawang merah": "https://drive.google.com/thumbnail?id=1jgF0fysWvYAzgidQrZTvhE2NfrTkPL9e&sz=w800",
-            "gula pasir": "https://drive.google.com/thumbnail?id=1IBT08J_OzlGmx8MCko1kCh_-5WCxC5uR&sz=w800",
-            "minyak goreng": "https://drive.google.com/thumbnail?id=16v_ASoABYlIlkuwxUS4mDA0MP0NlYp6X&sz=w800"
-        }
 
         komoditas_summary = []
         for kom in list_komoditas:
@@ -279,7 +261,8 @@ if not df_master.empty:
                 'icon': get_icon(kom)
             })
 
-        st.subheader("Papan Pantau Peringatan Dini", anchor=False)
+        # MENGGUNAKAN DIV UNTUK MENGHINDARI IKON RANTAI
+        st.markdown("<div class='custom-subheader'>Papan Pantau Peringatan Dini</div>", unsafe_allow_html=True)
 
         col_s, col_f, col_so = st.columns([4, 3, 3])
         with col_s:
@@ -337,12 +320,8 @@ if not df_master.empty:
                 warna_inflasi = "red" if delta_n1 > 0 else "green"
                 tanda_inflasi = "▲" if delta_n1 > 0 else "▼" if delta_n1 < 0 else "-"
 
-                link_foto = kamus_foto.get(str(kom).lower(), "")
-                img_tag = f'<img src="{link_foto}" style="position: absolute; right: 0; top: 0; height: 100%; width: 45%; object-fit: cover; object-position: right center; opacity: 0.25; z-index: 0; -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 80%); mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 80%);">' if link_foto else ''
-
                 card_html = f"""
                 <div style="position: relative; overflow: hidden; border: 2px solid {warna_border}; border-radius: 10px; padding: 15px; background-color: {warna_bg}; margin-bottom: 10px; color: inherit;">
-                    {img_tag}
                     <div style="position: relative; z-index: 1;">
                         <div style="font-size: 1.15rem; font-weight: bold; margin-top:0px; margin-bottom:10px; color: inherit; display:flex; align-items:center; gap:8px;">
                             {icon} {kom}
@@ -411,7 +390,9 @@ if not df_master.empty:
         col4.metric("Tingkat Akurasi", f"{akurasi:.2f}%", "Akurasi Historis")
         st.divider()
 
-        st.subheader("Tren Harga & Proyeksi Interval Risiko", anchor=False)
+        # MENGGUNAKAN DIV UNTUK MENGHINDARI IKON RANTAI
+        st.markdown("<div class='custom-subheader'>Tren Harga & Proyeksi Interval Risiko</div>", unsafe_allow_html=True)
+        
         fig = make_subplots(specs=[[{"secondary_y": True}]])
         if 'neraca' in df_filtered.columns:
             fig.add_trace(go.Bar(x=df_hist['bulan_tahun'], y=df_hist['neraca'], name='Neraca Aktual', marker_color='rgba(54, 162, 235, 0.4)'), secondary_y=True)
@@ -439,11 +420,11 @@ if not df_master.empty:
 
         st.divider()
 
-        st.subheader("Pusat Komando & Mitigasi Risiko", anchor=False)
         col_mit, col_email = st.columns([1.2, 1])
 
         with col_mit:
-            st.markdown("<div style='font-size:1.15rem; font-weight:bold; margin-bottom:10px;'>Rekomendasi Kebijakan</div>", unsafe_allow_html=True)
+            # MENGGUNAKAN DIV UNTUK MENGHINDARI IKON RANTAI
+            st.markdown("<div class='custom-subheader' style='margin-top:0;'>Rekomendasi Kebijakan</div>", unsafe_allow_html=True)
 
             worst_status = "aman"
             worst_month = None
@@ -488,7 +469,7 @@ if not df_master.empty:
             st.info(f"**Analisis Faktor Utama (Model {arima_order}):** Gejolak sangat dipengaruhi oleh variabel eksternal **{str(exog_nama).replace('Eks_','')}**.")
 
         with col_email:
-            st.markdown("<div style='font-size:1.15rem; font-weight:bold; margin-bottom:10px;'>Surat Instruksi Pemimpin</div>", unsafe_allow_html=True)
+            st.markdown("<div class='custom-subheader' style='margin-top:0;'>Surat Instruksi Pemimpin</div>", unsafe_allow_html=True)
             with st.container(border=True):
                 catatan_bos = st.text_area("Catatan/Instruksi Pemimpin BI Sumsel:", placeholder="Ketik instruksi kebijakan di sini untuk dikirim ke seluruh Tim TPID...")
 

@@ -510,8 +510,12 @@ if not df_master.empty:
 # FOOTER WEBSITE (Ramping & Compact)
 # ==========================================
 st.markdown("""
-<div class="footer-ampera">
-    <img src="https://drive.google.com/uc?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk" style="width: 200px; opacity: 0.5;">
-    <p style="font-size: 12px; margin-top: 10px;">&copy; 2026 Kelompok 2 PCPM 40 - Bank Indonesia</p>
+<div class="footer-ampera" style="text-align: center; margin-top: 50px;">
+    <img src="https://drive.google.com/uc?id=1kl8Obo_RbYXgQZtwvO0Qin4E_cTv9KGk" 
+         style="width: 200px; opacity: 0.5;" 
+         alt="Logo Ampera">
+    <p style="font-size: 12px; margin-top: 10px; opacity: 0.6;">
+        &copy; 2026 Kelompok 2 PCPM 40 - Bank Indonesia
+    </p>
 </div>
 """, unsafe_allow_html=True)

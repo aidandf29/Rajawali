@@ -84,14 +84,15 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
 
 .footer-siluet {
     width: 100%;
-    padding-bottom: 15%;
+    height: 420px;
     background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
     background-repeat: no-repeat;
     background-position: center bottom;
-    background-size: contain;
+    background-size: cover;
     filter: brightness(0) invert(0.5);
     opacity: 0.15;
 }
+
 .footer-text-bar {
     width: 100%;
     padding: 14px 0;

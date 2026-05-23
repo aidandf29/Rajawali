@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 # ==========================================
 st.set_page_config(
     page_title="BI - RAJAWALI", 
-    page_icon="https://drive.google.com/uc?export=view&id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY", 
+    page_icon="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w128", 
     layout="wide"
 )
 
@@ -41,7 +41,7 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
 
 /* 3. LOGO HEADER BAWAAN STREAMLIT (Kiri Atas) */
 [data-testid="stHeader"] {
-    background-image: url('https://drive.google.com/uc?export=view&id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk');
+    background-image: url('https://drive.google.com/thumbnail?id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk&sz=w400');
     background-repeat: no-repeat;
     background-position: 20px center;
     background-size: auto 65%;
@@ -58,7 +58,7 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     margin-right: -50vw;
     margin-top: -65px; 
     padding: 60px 10% 40px 10%; 
-    background-image: url('https://drive.google.com/uc?export=view&id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E');
+    background-image: url('https://drive.google.com/thumbnail?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E&sz=w1920');
     background-size: cover;
     background-position: center 30%;
     color: var(--text-color) !important;
@@ -110,7 +110,7 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     font-size: 13px;
     font-weight: 600;
     opacity: 0.7;
-    background-image: url('https://drive.google.com/uc?export=view&id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X');
+    background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
     background-repeat: no-repeat;
     background-position: bottom center;
     background-size: 100% auto;
@@ -138,7 +138,7 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('https://drive.google.com/uc?export=view&id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X');
+    background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
     background-repeat: no-repeat;
     background-position: bottom center;
     background-size: contain;
@@ -265,7 +265,7 @@ if not df_master.empty:
 <div class="top-backdrop">
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
 <div style="flex: 1; min-width: 120px; max-width: 120px;">
-<img src="https://drive.google.com/uc?export=view&id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY" style="width: 100%;">
+<img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%;">
 </div>
 <div style="flex: 8; min-width: 300px; color: inherit;">
 <div style="margin:0; padding:0; line-height: 1.1; font-size: 3.2rem; font-weight:bold;">BI - RAJAWALI</div>
@@ -298,16 +298,16 @@ if not df_master.empty:
         st.markdown(backdrop_html, unsafe_allow_html=True)
 
         kamus_foto = {
-            "beras": "https://drive.google.com/uc?export=view&id=1u-NKeYa2kDo8EWvIsqWqk3YmE38D6mi1",
-            "cabai merah": "https://drive.google.com/uc?export=view&id=1SxPyn-4Ib8nsn4-bdbR3S8jxAeqj3paN",
-            "cabai rawit": "https://drive.google.com/uc?export=view&id=12AvNJA9f20B64DrRp1rmpMLecrLvDxHa",
-            "telur ayam": "https://drive.google.com/uc?export=view&id=1uFGm8hueEjZp0fmc23uSdUmUc4E9F95P",
-            "daging ayam": "https://drive.google.com/uc?export=view&id=1koQ53csAw90x11A_kq6M513oDmI8vaU7",
-            "daging sapi": "https://drive.google.com/uc?export=view&id=1JB9BDUIotFHaSu54RCEKFmH-BICSyola",
-            "bawang putih": "https://drive.google.com/uc?export=view&id=1DX-EKXX-2ugC9i60xWAqT8KbiQHrWVQW",
-            "bawang merah": "https://drive.google.com/uc?export=view&id=1jgF0fysWvYAzgidQrZTvhE2NfrTkPL9e",
-            "gula pasir": "https://drive.google.com/uc?export=view&id=1IBT08J_OzlGmx8MCko1kCh_-5WCxC5uR",
-            "minyak goreng": "https://drive.google.com/uc?export=view&id=16v_ASoABYlIlkuwxUS4mDA0MP0NlYp6X"
+            "beras": "https://drive.google.com/thumbnail?id=1u-NKeYa2kDo8EWvIsqWqk3YmE38D6mi1&sz=w800",
+            "cabai merah": "https://drive.google.com/thumbnail?id=1SxPyn-4Ib8nsn4-bdbR3S8jxAeqj3paN&sz=w800",
+            "cabai rawit": "https://drive.google.com/thumbnail?id=12AvNJA9f20B64DrRp1rmpMLecrLvDxHa&sz=w800",
+            "telur ayam": "https://drive.google.com/thumbnail?id=1uFGm8hueEjZp0fmc23uSdUmUc4E9F95P&sz=w800",
+            "daging ayam": "https://drive.google.com/thumbnail?id=1koQ53csAw90x11A_kq6M513oDmI8vaU7&sz=w800",
+            "daging sapi": "https://drive.google.com/thumbnail?id=1JB9BDUIotFHaSu54RCEKFmH-BICSyola&sz=w800",
+            "bawang putih": "https://drive.google.com/thumbnail?id=1DX-EKXX-2ugC9i60xWAqT8KbiQHrWVQW&sz=w800",
+            "bawang merah": "https://drive.google.com/thumbnail?id=1jgF0fysWvYAzgidQrZTvhE2NfrTkPL9e&sz=w800",
+            "gula pasir": "https://drive.google.com/thumbnail?id=1IBT08J_OzlGmx8MCko1kCh_-5WCxC5uR&sz=w800",
+            "minyak goreng": "https://drive.google.com/thumbnail?id=16v_ASoABYlIlkuwxUS4mDA0MP0NlYp6X&sz=w800"
         }
 
         komoditas_summary = []
@@ -474,8 +474,8 @@ if not df_master.empty:
 
         with col1:
             st.markdown(f"""
-            <div style="padding: 12px 15px; border-radius: 8px; border-left: 5px solid {warna_status_detail}; height: 100%;">
-                <p style="margin:0; font-size:14px;">Status EWS ({pilihan_waktu})</p>
+            <div style="padding: 12px 15px; border-radius: 8px; background-color: {bg_status_detail}; border-left: 5px solid {warna_status_detail}; height: 100%;">
+                <p style="margin:0; font-size:14px; opacity:0.8;">Status EWS ({pilihan_waktu})</p>
                 <h2 style="margin:5px 0 0 0; font-size: 2rem; color:{warna_status_detail};">{str(status_terkini).upper()}</h2>
             </div>
             """, unsafe_allow_html=True)

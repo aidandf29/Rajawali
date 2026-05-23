@@ -423,7 +423,7 @@ if not df_master.empty:
         icon_detail = get_icon(komoditas)
 
         # Tombol kembali dinaikkan ke atas judul
-        st.button("⬅ Kembali ke Beranda", on_click=go_to_home, type="secondary")
+        st.button("Kembali", on_click=go_to_home, type="secondary")
 
         st.markdown(f"<div style='font-size:2rem; font-weight:bold; margin-top:10px; margin-bottom:20px; color:inherit; display:flex; align-items:center; gap:12px;'>{icon_detail} Analisis Detail EWS: {komoditas}</div>", unsafe_allow_html=True)
 
@@ -474,7 +474,7 @@ if not df_master.empty:
 
         with col1:
             st.markdown(f"""
-            <div style="padding: 12px 15px; border-radius: 8px; background-color: {bg_status_detail}; border-left: 5px solid {warna_status_detail}; height: 100%;">
+            <div style="padding: 12px 15px; border-radius: 8px; border-left: 5px solid {warna_status_detail}; height: 100%;">
                 <p style="margin:0; font-size:14px; opacity:0.8;">Status EWS ({pilihan_waktu})</p>
                 <h2 style="margin:5px 0 0 0; font-size: 2rem; color:{warna_status_detail};">{str(status_terkini).upper()}</h2>
             </div>

@@ -58,12 +58,11 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     margin-right: -50vw;
     margin-top: -65px; 
     padding: 60px 10% 40px 10%; 
-    /* Menggunakan background-blend-mode agar foto lebih gelap/redup */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://drive.google.com/uc?export=view&id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E');
+    background-image: url('https://drive.google.com/thumbnail?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E&sz=w1920');
     background-size: cover;
     background-position: center 30%;
-    color: #FFFFFF !important;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    color: #FFFFFF !important; /* Diubah menjadi putih permanen agar tidak nabrak gambar */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     z-index: 1;
 }
 .top-backdrop::before {

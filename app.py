@@ -59,6 +59,7 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     margin-top: -65px; 
     padding: 60px 10% 40px 10%; 
     background-image: url('https://drive.google.com/thumbnail?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E&sz=w1920');
+    opacity: 0.88;
     background-size: cover;
     background-position: center 30%;
     color: #FFFFFF !important; /* Diubah menjadi putih permanen agar tidak nabrak gambar */
@@ -354,7 +355,7 @@ if not df_master.empty:
                 'icon': get_icon(kom)
             })
 
-        st.markdown("<div class='custom-subheader'>Papan Pantau Peringatan Dini</div>", unsafe_allow_html=True)
+        st.markdown("<div class='custom-subheader'>Papan Pantau Komoditas</div>", unsafe_allow_html=True)
 
         col_s, col_f, col_so = st.columns([4, 3, 3])
         with col_s:

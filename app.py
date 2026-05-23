@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 # ==========================================
 st.set_page_config(
     page_title="BI - RAJAWALI", 
-    page_icon="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w128", 
+    page_icon="https://drive.google.com/uc?export=view&id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY", 
     layout="wide"
 )
 
@@ -41,14 +41,14 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
 
 /* 3. LOGO HEADER BAWAAN STREAMLIT (Kiri Atas) */
 [data-testid="stHeader"] {
-    background-image: url('https://drive.google.com/thumbnail?id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk&sz=w400');
+    background-image: url('https://drive.google.com/uc?export=view&id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk');
     background-repeat: no-repeat;
     background-position: 20px center;
     background-size: auto 65%;
     background-color: transparent;
 }
 
-/* 4. BACKDROP PASAR (Adaptif Terhadap Light & Dark Mode) */
+/* 4. BACKDROP PASAR (Warna Gelap Stabil & Teks Putih) */
 .top-backdrop {
     width: 100vw;
     position: relative;
@@ -58,31 +58,21 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     margin-right: -50vw;
     margin-top: -65px; 
     padding: 60px 10% 40px 10%; 
-    background-image: url('https://drive.google.com/thumbnail?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E&sz=w1920');
+    background-image: linear-gradient(rgba(20, 25, 35, 0.85), rgba(20, 25, 35, 0.85)), url('https://drive.google.com/uc?export=view&id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E');
     background-size: cover;
     background-position: center 30%;
-    color: var(--text-color) !important;
+    color: white !important;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    z-index: 1;
-}
-.top-backdrop::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: var(--background-color);
-    opacity: 0.88; 
-    z-index: -1;
 }
 
 /* Kotak Radar Transparan di atas Backdrop Pasar */
 .radar-box-transparent {
-    background-color: rgba(150, 150, 150, 0.1); 
+    background-color: rgba(255, 255, 255, 0.08); 
     padding: 30px; 
     border-radius: 12px; 
     margin-top: 30px;
     border-left: 6px solid #FFD700;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(150, 150, 150, 0.2);
+    backdrop-filter: blur(8px);
 }
 
 /* 5. FOOTER AMPERA */
@@ -102,58 +92,20 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     opacity: 0.7;
 }
 
-.footer-text-bar {
-    width: 100%;
-    padding: 200px 0 14px 0;
-    text-align: center;
-    border-top: 1px solid rgba(150, 150, 150, 0.2);
-    font-size: 13px;
-    font-weight: 600;
-    opacity: 0.7;
-    background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
-    background-repeat: no-repeat;
-    background-position: bottom center;
-    background-size: 100% auto;
-    filter: brightness(0) invert(0.5);
+/* 6. SCROLLBAR MENYAMAR */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
 }
-.footer-container {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    height: 400px;
-    margin-top: 60px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 25px;
-    border-top: 1px solid rgba(150, 150, 150, 0.2);
-    overflow: hidden;
+::-webkit-scrollbar-track {
+    background: transparent;
 }
-.footer-bg-siluet {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
-    background-repeat: no-repeat;
-    background-position: bottom center;
-    background-size: contain;
-    filter: brightness(0) invert(0.5);
-    opacity: 0.15;
-    transform: translateY(0%);
-    z-index: 0;
-    pointer-events: none;
+::-webkit-scrollbar-thumb {
+    background: rgba(150, 150, 150, 0.3);
+    border-radius: 10px;
 }
-.footer-text {
-    position: relative;
-    z-index: 1;
-    font-size: 13px;
-    font-weight: 600;
-    opacity: 0.7;
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(150, 150, 150, 0.6);
 }
 
 /* Judul Kustom Pengganti st.subheader (Anti Ikon Rantai) */
@@ -265,15 +217,15 @@ if not df_master.empty:
 <div class="top-backdrop">
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
 <div style="flex: 1; min-width: 120px; max-width: 120px;">
-<img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%;">
+<img src="https://drive.google.com/uc?export=view&id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY" style="width: 100%;">
 </div>
-<div style="flex: 8; min-width: 300px; color: inherit;">
+<div style="flex: 8; min-width: 300px; color: white;">
 <div style="margin:0; padding:0; line-height: 1.1; font-size: 3.2rem; font-weight:bold;">BI - RAJAWALI</div>
-<div style="margin:0; padding:0; color: #D32F2F; margin-bottom: 8px; font-size: 1.6rem; font-weight:bold;">Radar Gejolak Harga Waspada Inflasi</div>
+<div style="margin:0; padding:0; color: #ff6b6b; margin-bottom: 8px; font-size: 1.6rem; font-weight:bold;">Radar Gejolak Harga Waspada Inflasi</div>
 <p style="font-size: 1.2rem; opacity: 0.9; margin:0;">Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>
 </div>
 </div>
-<div class="radar-box-transparent">
+<div class="radar-box-transparent" style="color: white;">
 <div style="margin-top: 0; margin-bottom: 25px; font-size: 2rem; font-weight: bold;">Radar Fluktuasi Harga</div>
 <div style="display: flex; flex-wrap: wrap; gap: 20px;">
 <div style="flex: 1; min-width: 200px;">
@@ -298,16 +250,16 @@ if not df_master.empty:
         st.markdown(backdrop_html, unsafe_allow_html=True)
 
         kamus_foto = {
-            "beras": "https://drive.google.com/thumbnail?id=1u-NKeYa2kDo8EWvIsqWqk3YmE38D6mi1&sz=w800",
-            "cabai merah": "https://drive.google.com/thumbnail?id=1SxPyn-4Ib8nsn4-bdbR3S8jxAeqj3paN&sz=w800",
-            "cabai rawit": "https://drive.google.com/thumbnail?id=12AvNJA9f20B64DrRp1rmpMLecrLvDxHa&sz=w800",
-            "telur ayam": "https://drive.google.com/thumbnail?id=1uFGm8hueEjZp0fmc23uSdUmUc4E9F95P&sz=w800",
-            "daging ayam": "https://drive.google.com/thumbnail?id=1koQ53csAw90x11A_kq6M513oDmI8vaU7&sz=w800",
-            "daging sapi": "https://drive.google.com/thumbnail?id=1JB9BDUIotFHaSu54RCEKFmH-BICSyola&sz=w800",
-            "bawang putih": "https://drive.google.com/thumbnail?id=1DX-EKXX-2ugC9i60xWAqT8KbiQHrWVQW&sz=w800",
-            "bawang merah": "https://drive.google.com/thumbnail?id=1jgF0fysWvYAzgidQrZTvhE2NfrTkPL9e&sz=w800",
-            "gula pasir": "https://drive.google.com/thumbnail?id=1IBT08J_OzlGmx8MCko1kCh_-5WCxC5uR&sz=w800",
-            "minyak goreng": "https://drive.google.com/thumbnail?id=16v_ASoABYlIlkuwxUS4mDA0MP0NlYp6X&sz=w800"
+            "beras": "https://drive.google.com/uc?export=view&id=1u-NKeYa2kDo8EWvIsqWqk3YmE38D6mi1",
+            "cabai merah": "https://drive.google.com/uc?export=view&id=1SxPyn-4Ib8nsn4-bdbR3S8jxAeqj3paN",
+            "cabai rawit": "https://drive.google.com/uc?export=view&id=12AvNJA9f20B64DrRp1rmpMLecrLvDxHa",
+            "telur ayam": "https://drive.google.com/uc?export=view&id=1uFGm8hueEjZp0fmc23uSdUmUc4E9F95P",
+            "daging ayam": "https://drive.google.com/uc?export=view&id=1koQ53csAw90x11A_kq6M513oDmI8vaU7",
+            "daging sapi": "https://drive.google.com/uc?export=view&id=1JB9BDUIotFHaSu54RCEKFmH-BICSyola",
+            "bawang putih": "https://drive.google.com/uc?export=view&id=1DX-EKXX-2ugC9i60xWAqT8KbiQHrWVQW",
+            "bawang merah": "https://drive.google.com/uc?export=view&id=1jgF0fysWvYAzgidQrZTvhE2NfrTkPL9e",
+            "gula pasir": "https://drive.google.com/uc?export=view&id=1IBT08J_OzlGmx8MCko1kCh_-5WCxC5uR",
+            "minyak goreng": "https://drive.google.com/uc?export=view&id=16v_ASoABYlIlkuwxUS4mDA0MP0NlYp6X"
         }
 
         komoditas_summary = []

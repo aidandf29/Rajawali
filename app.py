@@ -475,7 +475,7 @@ if not df_master.empty:
         with col1:
             st.markdown(f"""
             <div style="padding: 12px 15px; border-radius: 8px; border-left: 5px solid {warna_status_detail}; height: 100%;">
-                <p style="margin:0; font-size:14px; opacity:0.8;">Status EWS ({pilihan_waktu})</p>
+                <p style="margin:0; font-size:14px;">Status EWS ({pilihan_waktu})</p>
                 <h2 style="margin:5px 0 0 0; font-size: 2rem; color:{warna_status_detail};">{str(status_terkini).upper()}</h2>
             </div>
             """, unsafe_allow_html=True)

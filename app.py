@@ -80,20 +80,38 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     color: #FFFFFF !important;
 }
 
-/* RUNNING TEXT (TICKER) EDGE-TO-EDGE & SHADOW */
+/* RUNNING TEXT / TICKER */
 .ticker-wrapper {
     width: 100vw;
     position: relative;
+
     left: 50%;
     right: 50%;
+
     margin-left: -50vw;
     margin-right: -50vw;
-    background-color: var(--secondary-background-color);
-    padding: 12px 0;
-    box-shadow: 0px 6px 12px rgba(0,0,0,0.2);
-    color: var(--text-color);
-    z-index: 2;
-    border-bottom: 1px solid rgba(150,150,150,0.2);
+
+    margin-top: 0px; /* bikin nempel ke bg pasar */
+    padding: 14px 0;
+
+    background: rgba(10, 15, 25, 0.96);
+
+    box-shadow:
+        0 -4px 10px rgba(0,0,0,0.25),
+        0 6px 18px rgba(0,0,0,0.35);
+
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+
+    overflow: hidden;
+    z-index: 999;
+}
+
+/* isi ticker */
+.ticker-track {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
 }
 
 /* 5. FOOTER AMPERA */
@@ -321,11 +339,10 @@ if not df_master.empty:
             # Layout flex agar iconify sejajar presisi dengan teks
             item = f"<div style='display:inline-flex; align-items:center; margin-right: 35px; font-size: 16px; font-weight: 600;'>{k['icon']}&nbsp;<span style='margin-left: 5px; margin-right: 5px;'>{k['nama']}</span> <span style='color:{warna_inflasi};'> {tanda_inflasi} {k['delta_n1']:+.2f}%</span></div>"
             ticker_items.append(item)
-            
         marquee_html = f"""
         <div class="ticker-wrapper">
             <marquee behavior="scroll" direction="left" scrollamount="6">
-                <div style="display: flex; align-items: center; padding-top: 2px;">
+                <div class="ticker-track">
                     {''.join(ticker_items)}
                 </div>
             </marquee>

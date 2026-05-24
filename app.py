@@ -278,7 +278,7 @@ if not df_master.empty:
 </div>
 <div style="flex: 8; min-width: 300px; color: inherit;">
 <div style="margin:0; padding:0; line-height: 1.1; font-size: 3.2rem; font-weight:bold;">BI - RAJAWALI</div>
-<div style="margin:0; padding:0; color: #ff6b6b; margin-bottom: 8px; font-size: 1.6rem; font-weight:bold;">Radar Gejolak Harga Waspada Inflasi</div>
+<div style="margin:0; padding:0; color: #D32F2F; margin-bottom: 8px; font-size: 1.6rem; font-weight:bold;">Radar Gejolak Harga Waspada Inflasi</div>
 <p style="font-size: 1.2rem; opacity: 0.9; margin:0;">Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>
 </div>
 </div>
@@ -347,7 +347,7 @@ if not df_master.empty:
             })
 
         # ==========================================
-        # RUNNING TEXT / TICKER KOMODITAS
+        # RUNNING TEXT / TICKER KOMODITAS (EDGE-TO-EDGE)
         # ==========================================
         ticker_items = []
         for k in komoditas_summary:
@@ -357,8 +357,9 @@ if not df_master.empty:
             item = f"<div style='display:inline-flex; align-items:center; margin-right: 35px; font-size: 16px; font-weight: 600;'>{k['icon']}&nbsp;<span style='margin-left: 5px; margin-right: 5px;'>{k['nama']}</span> <span style='color:{warna_inflasi};'> {tanda_inflasi} {k['delta_n1']:+.2f}%</span></div>"
             ticker_items.append(item)
             
+        # PENGGANTIAN CSS inline agar melebar dari ujung ke ujung & punya bayangan (shadow)
         marquee_html = f"""
-        <div style="background-color: var(--secondary-background-color); border: 1px solid rgba(150,150,150,0.2); border-radius: 8px; padding: 12px 0; margin-top: 15px; margin-bottom: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: var(--text-color);">
+        <div style="width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; background-color: var(--secondary-background-color); border-top: 1px solid rgba(150,150,150,0.2); border-bottom: 1px solid rgba(150,150,150,0.2); padding: 12px 0; margin-top: 5px; margin-bottom: 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); color: var(--text-color); z-index: 2;">
             <marquee behavior="scroll" direction="left" scrollamount="6">
                 <div style="display: flex; align-items: center; padding-top: 2px;">
                     {''.join(ticker_items)}

@@ -48,7 +48,7 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     background-color: transparent;
 }
 
-/* 4. BACKDROP PASAR (Adaptif Terhadap Light & Dark Mode) */
+/* 4. BACKDROP PASAR (Adaptif & Teks Putih Permanen) */
 .top-backdrop {
     width: 100vw;
     position: relative;
@@ -59,10 +59,11 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     margin-top: -65px; 
     padding: 60px 10% 40px 10%; 
     background-image: url('https://drive.google.com/thumbnail?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E&sz=w1920');
-    opacity: 0.80;
     background-size: cover;
     background-position: center 30%;
-    color: #FFFFFF !important; /* Diubah menjadi putih permanen agar tidak nabrak gambar */
+    /* Memaksa teks jadi putih dan diberi bayangan agar kontras menonjol */
+    color: #FFFFFF !important;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     z-index: 1;
 }
@@ -75,15 +76,16 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     z-index: -1;
 }
 
-/* Kotak Radar Transparan di atas Backdrop Pasar */
+/* Kotak Radar Transparan (Lebih Gelap & Blur Kuat agar teks terbaca) */
 .radar-box-transparent {
-    background-color: rgba(255, 255, 255, 0.08); 
+    background-color: rgba(0, 0, 0, 0.45); 
     padding: 30px; 
     border-radius: 12px; 
     margin-top: 30px;
     border-left: 6px solid #FFD700;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(150, 150, 150, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #FFFFFF !important;
 }
 
 /* 5. FOOTER AMPERA */
@@ -171,22 +173,11 @@ span[data-baseweb="tag"] { background-color: var(--secondary-background-color) !
 span[data-baseweb="tag"] span { color: var(--text-color) !important; }
 span[data-baseweb="tag"] svg { fill: var(--text-color) !important; }
 
-/* 6. SCROLLBAR MENYAMAR (Tipis & Transparan) */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    background-color: transparent;
-}
-::-webkit-scrollbar-track {
-    background-color: transparent;
-}
-::-webkit-scrollbar-thumb {
-    background-color: rgba(150, 150, 150, 0.4);
-    border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(150, 150, 150, 0.7);
-}
+/* 6. SCROLLBAR MENYAMAR (Tipis & Membaur) */
+::-webkit-scrollbar { width: 8px; height: 8px; background-color: transparent; }
+::-webkit-scrollbar-track { background-color: transparent; }
+::-webkit-scrollbar-thumb { background-color: rgba(150, 150, 150, 0.4); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background-color: rgba(150, 150, 150, 0.7); }
 </style>
 """, unsafe_allow_html=True)
 
@@ -287,7 +278,7 @@ if not df_master.empty:
 </div>
 <div style="flex: 8; min-width: 300px; color: inherit;">
 <div style="margin:0; padding:0; line-height: 1.1; font-size: 3.2rem; font-weight:bold;">BI - RAJAWALI</div>
-<div style="margin:0; padding:0; color: #D32F2F; margin-bottom: 8px; font-size: 1.6rem; font-weight:bold;">Radar Gejolak Harga Waspada Inflasi</div>
+<div style="margin:0; padding:0; color: #ff6b6b; margin-bottom: 8px; font-size: 1.6rem; font-weight:bold;">Radar Gejolak Harga Waspada Inflasi</div>
 <p style="font-size: 1.2rem; opacity: 0.9; margin:0;">Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>
 </div>
 </div>
@@ -295,19 +286,19 @@ if not df_master.empty:
 <div style="margin-top: 0; margin-bottom: 25px; font-size: 2rem; font-weight: bold;">Radar Fluktuasi Harga</div>
 <div style="display: flex; flex-wrap: wrap; gap: 20px;">
 <div style="flex: 1; min-width: 200px;">
-<p style="margin: 0; font-size: 15px; opacity: 0.7;">Status Komoditas</p>
+<p style="margin: 0; font-size: 15px; opacity: 0.8;">Status Komoditas</p>
 <div style="margin: 0; font-size: 2.2rem; font-weight:bold; color: {warna_risiko};">{komoditas_bermasalah} Berisiko</div>
-<p style="margin: 0; font-size: 14px; opacity: 0.6;">Bulan Depan: {bln_proj_terdekat_str}</p>
+<p style="margin: 0; font-size: 14px; opacity: 0.7;">Bulan Depan: {bln_proj_terdekat_str}</p>
 </div>
 <div style="flex: 1; min-width: 200px;">
-<p style="margin: 0; font-size: 15px; opacity: 0.7;">Total Pantauan</p>
+<p style="margin: 0; font-size: 15px; opacity: 0.8;">Total Pantauan</p>
 <div style="margin: 0; font-size: 2.2rem; font-weight:bold;">{len(list_komoditas)} Komoditas</div>
-<p style="margin: 0; font-size: 14px; opacity: 0.6;">Harga & Pasokan</p>
+<p style="margin: 0; font-size: 14px; opacity: 0.7;">Harga & Pasokan</p>
 </div>
 <div style="flex: 1; min-width: 200px;">
-<p style="margin: 0; font-size: 15px; opacity: 0.7;">Sistem Prediksi</p>
+<p style="margin: 0; font-size: 15px; opacity: 0.8;">Sistem Prediksi</p>
 <div style="margin: 0; font-size: 2.2rem; font-weight:bold;">Aktif 🟢</div>
-<p style="margin: 0; font-size: 14px; opacity: 0.6;">SARIMAX Terkalibrasi</p>
+<p style="margin: 0; font-size: 14px; opacity: 0.7;">SARIMAX Terkalibrasi</p>
 </div>
 </div>
 </div>
@@ -355,7 +346,29 @@ if not df_master.empty:
                 'icon': get_icon(kom)
             })
 
-        st.markdown("<div class='custom-subheader'>Papan Pantau Komoditas</div>", unsafe_allow_html=True)
+        # ==========================================
+        # RUNNING TEXT / TICKER KOMODITAS
+        # ==========================================
+        ticker_items = []
+        for k in komoditas_summary:
+            warna_inflasi = "#FF4B4B" if k['delta_n1'] > 0 else "#21C354"
+            tanda_inflasi = "▲" if k['delta_n1'] > 0 else "▼" if k['delta_n1'] < 0 else "-"
+            # Layout flex agar iconify sejajar presisi dengan teks
+            item = f"<div style='display:inline-flex; align-items:center; margin-right: 35px; font-size: 16px; font-weight: 600;'>{k['icon']}&nbsp;<span style='margin-left: 5px; margin-right: 5px;'>{k['nama']}</span> <span style='color:{warna_inflasi};'> {tanda_inflasi} {k['delta_n1']:+.2f}%</span></div>"
+            ticker_items.append(item)
+            
+        marquee_html = f"""
+        <div style="background-color: var(--secondary-background-color); border: 1px solid rgba(150,150,150,0.2); border-radius: 8px; padding: 12px 0; margin-top: 15px; margin-bottom: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: var(--text-color);">
+            <marquee behavior="scroll" direction="left" scrollamount="6">
+                <div style="display: flex; align-items: center; padding-top: 2px;">
+                    {''.join(ticker_items)}
+                </div>
+            </marquee>
+        </div>
+        """
+        st.markdown(marquee_html, unsafe_allow_html=True)
+
+        st.markdown("<div class='custom-subheader' style='margin-top: 15px;'>Papan Pantau Peringatan Dini</div>", unsafe_allow_html=True)
 
         col_s, col_f, col_so = st.columns([4, 3, 3])
         with col_s:

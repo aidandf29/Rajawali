@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 # ==========================================
 st.set_page_config(
     page_title="BI - RAJAWALI", 
-    page_icon="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w128", 
+    page_icon="https://drive.google.com/uc?export=view&id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY", 
     layout="wide"
 )
 
@@ -41,14 +41,14 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
 
 /* 3. LOGO HEADER BAWAAN STREAMLIT (Kiri Atas) */
 [data-testid="stHeader"] {
-    background-image: url('https://drive.google.com/thumbnail?id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk&sz=w400');
+    background-image: url('https://drive.google.com/uc?export=view&id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk');
     background-repeat: no-repeat;
     background-position: 20px center;
     background-size: auto 65%;
     background-color: transparent;
 }
 
-/* 4. BACKDROP PASAR (Adaptif & Teks Putih Permanen) */
+/* 4. BACKDROP PASAR (Teks Putih Permanen & Background Redup) */
 .top-backdrop {
     width: 100vw;
     position: relative;
@@ -58,34 +58,41 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     margin-right: -50vw;
     margin-top: -65px; 
     padding: 60px 10% 40px 10%; 
-    background-image: url('https://drive.google.com/thumbnail?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E&sz=w1920');
+    /* Overlay linear-gradient agar gambar lebih redup dan tulisan pop-up */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://drive.google.com/uc?export=view&id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E');
     background-size: cover;
     background-position: center 30%;
-    /* Memaksa teks jadi putih dan diberi bayangan agar kontras menonjol */
-    color: #FFFFFF !important;
-    text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    color: #FFFFFF !important; /* Paksa teks putih */
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.8); /* Bayangan teks */
     z-index: 1;
 }
-.top-backdrop::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: var(--background-color);
-    opacity: 0.88; 
-    z-index: -1;
-}
 
-/* Kotak Radar Transparan (Lebih Gelap & Blur Kuat agar teks terbaca) */
+/* Kotak Radar Transparan di atas Backdrop Pasar */
 .radar-box-transparent {
-    background-color: rgba(0, 0, 0, 0.45); 
+    background-color: rgba(0, 0, 0, 0.45); /* Digelapkan sedikit agar teks terbaca */
     padding: 30px; 
     border-radius: 12px; 
     margin-top: 30px;
     border-left: 6px solid #FFD700;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    color: #FFFFFF !important;
+}
+
+/* RUNNING TEXT (EDGE TO EDGE & SHADOW) */
+.ticker-wrapper {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    background-color: var(--secondary-background-color);
+    padding: 12px 0;
+    box-shadow: 0px 8px 15px rgba(0,0,0,0.15); /* Shadow sebagai pembatas */
+    color: var(--text-color);
+    z-index: 2;
+    border-top: 1px solid rgba(150,150,150,0.2);
+    border-bottom: 1px solid rgba(150,150,150,0.2);
 }
 
 /* 5. FOOTER AMPERA */
@@ -105,61 +112,13 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     opacity: 0.7;
 }
 
-.footer-text-bar {
-    width: 100%;
-    padding: 200px 0 14px 0;
-    text-align: center;
-    border-top: 1px solid rgba(150, 150, 150, 0.2);
-    font-size: 13px;
-    font-weight: 600;
-    opacity: 0.7;
-    background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
-    background-repeat: no-repeat;
-    background-position: bottom center;
-    background-size: 100% auto;
-    filter: brightness(0) invert(0.5);
-}
-.footer-container {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    height: 400px;
-    margin-top: 60px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 25px;
-    border-top: 1px solid rgba(150, 150, 150, 0.2);
-    overflow: hidden;
-}
-.footer-bg-siluet {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
-    background-repeat: no-repeat;
-    background-position: bottom center;
-    background-size: contain;
-    filter: brightness(0) invert(0.5);
-    opacity: 0.15;
-    transform: translateY(0%);
-    z-index: 0;
-    pointer-events: none;
-}
-.footer-text {
-    position: relative;
-    z-index: 1;
-    font-size: 13px;
-    font-weight: 600;
-    opacity: 0.7;
-}
+/* SCROLLBAR MENYAMAR */
+::-webkit-scrollbar { width: 8px; height: 8px; background-color: transparent; }
+::-webkit-scrollbar-track { background-color: transparent; }
+::-webkit-scrollbar-thumb { background-color: rgba(150, 150, 150, 0.4); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background-color: rgba(150, 150, 150, 0.7); }
 
-/* Judul Kustom Pengganti st.subheader (Anti Ikon Rantai) */
+/* Judul Kustom Pengganti st.subheader */
 .custom-subheader {
     font-size: 1.8rem;
     font-weight: bold;
@@ -168,16 +127,10 @@ a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a
     color: inherit;
 }
 
-/* Styling Filter Emas Adaptif (Aman di Light/Dark Mode) */
+/* Styling Filter Emas */
 span[data-baseweb="tag"] { background-color: var(--secondary-background-color) !important; border: 1.5px solid #FFD700 !important; color: var(--text-color) !important; }
 span[data-baseweb="tag"] span { color: var(--text-color) !important; }
 span[data-baseweb="tag"] svg { fill: var(--text-color) !important; }
-
-/* 6. SCROLLBAR MENYAMAR (Tipis & Membaur) */
-::-webkit-scrollbar { width: 8px; height: 8px; background-color: transparent; }
-::-webkit-scrollbar-track { background-color: transparent; }
-::-webkit-scrollbar-thumb { background-color: rgba(150, 150, 150, 0.4); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background-color: rgba(150, 150, 150, 0.7); }
 </style>
 """, unsafe_allow_html=True)
 
@@ -218,7 +171,6 @@ def get_icon(nama_komoditas):
     name = ":".join(parts[1:])
     url = f"https://api.iconify.design/{prefix}/{name}.svg"
     
-    # HTML tanpa spasi awal
     html_icon = f"""
 <span style="display: inline-block; width: 1.25em; height: 1.25em; background-color: currentColor; -webkit-mask: url({url}) no-repeat center / contain; mask: url({url}) no-repeat center / contain; vertical-align: text-bottom;"></span>
 """
@@ -269,54 +221,18 @@ if not df_master.empty:
             
         warna_risiko = "#FF4B4B" if komoditas_bermasalah > 0 else "#21C354"
 
-        # PERHATIAN: Semua baris HTML diletakkan di tepi kiri agar tidak menjadi Code Block Streamlit
-        backdrop_html = f"""
-<div class="top-backdrop">
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
-<div style="flex: 1; min-width: 120px; max-width: 120px;">
-<img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%;">
-</div>
-<div style="flex: 8; min-width: 300px; color: inherit;">
-<div style="margin:0; padding:0; line-height: 1.1; font-size: 3.2rem; font-weight:bold;">BI - RAJAWALI</div>
-<div style="margin:0; padding:0; color: #ff6b6b; margin-bottom: 8px; font-size: 1.6rem; font-weight:bold;">Radar Gejolak Harga Waspada Inflasi</div>
-<p style="font-size: 1.2rem; opacity: 0.9; margin:0;">Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>
-</div>
-</div>
-<div class="radar-box-transparent">
-<div style="margin-top: 0; margin-bottom: 25px; font-size: 2rem; font-weight: bold;">Radar Fluktuasi Harga</div>
-<div style="display: flex; flex-wrap: wrap; gap: 20px;">
-<div style="flex: 1; min-width: 200px;">
-<p style="margin: 0; font-size: 15px; opacity: 0.8;">Status Komoditas</p>
-<div style="margin: 0; font-size: 2.2rem; font-weight:bold; color: {warna_risiko};">{komoditas_bermasalah} Berisiko</div>
-<p style="margin: 0; font-size: 14px; opacity: 0.7;">Bulan Depan: {bln_proj_terdekat_str}</p>
-</div>
-<div style="flex: 1; min-width: 200px;">
-<p style="margin: 0; font-size: 15px; opacity: 0.8;">Total Pantauan</p>
-<div style="margin: 0; font-size: 2.2rem; font-weight:bold;">{len(list_komoditas)} Komoditas</div>
-<p style="margin: 0; font-size: 14px; opacity: 0.7;">Harga & Pasokan</p>
-</div>
-<div style="flex: 1; min-width: 200px;">
-<p style="margin: 0; font-size: 15px; opacity: 0.8;">Sistem Prediksi</p>
-<div style="margin: 0; font-size: 2.2rem; font-weight:bold;">Aktif 🟢</div>
-<p style="margin: 0; font-size: 14px; opacity: 0.7;">SARIMAX Terkalibrasi</p>
-</div>
-</div>
-</div>
-</div>
-"""
-        st.markdown(backdrop_html, unsafe_allow_html=True)
-
+        # Memindahkan inisialisasi dictionary dan loop ke atas agar Running Text dapat dirender bersama Backdrop
         kamus_foto = {
-            "beras": "https://drive.google.com/thumbnail?id=1u-NKeYa2kDo8EWvIsqWqk3YmE38D6mi1&sz=w800",
-            "cabai merah": "https://drive.google.com/thumbnail?id=1SxPyn-4Ib8nsn4-bdbR3S8jxAeqj3paN&sz=w800",
-            "cabai rawit": "https://drive.google.com/thumbnail?id=12AvNJA9f20B64DrRp1rmpMLecrLvDxHa&sz=w800",
-            "telur ayam": "https://drive.google.com/thumbnail?id=1uFGm8hueEjZp0fmc23uSdUmUc4E9F95P&sz=w800",
-            "daging ayam": "https://drive.google.com/thumbnail?id=1koQ53csAw90x11A_kq6M513oDmI8vaU7&sz=w800",
-            "daging sapi": "https://drive.google.com/thumbnail?id=1JB9BDUIotFHaSu54RCEKFmH-BICSyola&sz=w800",
-            "bawang putih": "https://drive.google.com/thumbnail?id=1DX-EKXX-2ugC9i60xWAqT8KbiQHrWVQW&sz=w800",
-            "bawang merah": "https://drive.google.com/thumbnail?id=1jgF0fysWvYAzgidQrZTvhE2NfrTkPL9e&sz=w800",
-            "gula pasir": "https://drive.google.com/thumbnail?id=1IBT08J_OzlGmx8MCko1kCh_-5WCxC5uR&sz=w800",
-            "minyak goreng": "https://drive.google.com/thumbnail?id=16v_ASoABYlIlkuwxUS4mDA0MP0NlYp6X&sz=w800"
+            "beras": "https://drive.google.com/uc?export=view&id=1u-NKeYa2kDo8EWvIsqWqk3YmE38D6mi1",
+            "cabai merah": "https://drive.google.com/uc?export=view&id=1SxPyn-4Ib8nsn4-bdbR3S8jxAeqj3paN",
+            "cabai rawit": "https://drive.google.com/uc?export=view&id=12AvNJA9f20B64DrRp1rmpMLecrLvDxHa",
+            "telur ayam": "https://drive.google.com/uc?export=view&id=1uFGm8hueEjZp0fmc23uSdUmUc4E9F95P",
+            "daging ayam": "https://drive.google.com/uc?export=view&id=1koQ53csAw90x11A_kq6M513oDmI8vaU7",
+            "daging sapi": "https://drive.google.com/uc?export=view&id=1JB9BDUIotFHaSu54RCEKFmH-BICSyola",
+            "bawang putih": "https://drive.google.com/uc?export=view&id=1DX-EKXX-2ugC9i60xWAqT8KbiQHrWVQW",
+            "bawang merah": "https://drive.google.com/uc?export=view&id=1jgF0fysWvYAzgidQrZTvhE2NfrTkPL9e",
+            "gula pasir": "https://drive.google.com/uc?export=view&id=1IBT08J_OzlGmx8MCko1kCh_-5WCxC5uR",
+            "minyak goreng": "https://drive.google.com/uc?export=view&id=16v_ASoABYlIlkuwxUS4mDA0MP0NlYp6X"
         }
 
         komoditas_summary = []
@@ -346,19 +262,16 @@ if not df_master.empty:
                 'icon': get_icon(kom)
             })
 
-        # ==========================================
-        # RUNNING TEXT / TICKER KOMODITAS
-        # ==========================================
+        # Membentuk HTML Ticker / Running Text
         ticker_items = []
         for k in komoditas_summary:
             warna_inflasi = "#FF4B4B" if k['delta_n1'] > 0 else "#21C354"
             tanda_inflasi = "▲" if k['delta_n1'] > 0 else "▼" if k['delta_n1'] < 0 else "-"
-            # Layout flex agar iconify sejajar presisi dengan teks
             item = f"<div style='display:inline-flex; align-items:center; margin-right: 35px; font-size: 16px; font-weight: 600;'>{k['icon']}&nbsp;<span style='margin-left: 5px; margin-right: 5px;'>{k['nama']}</span> <span style='color:{warna_inflasi};'> {tanda_inflasi} {k['delta_n1']:+.2f}%</span></div>"
             ticker_items.append(item)
             
         marquee_html = f"""
-        <div style="background-color: var(--secondary-background-color); border: 1px solid rgba(150,150,150,0.2); border-radius: 8px; padding: 12px 0; margin-top: 15px; margin-bottom: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: var(--text-color);">
+        <div class="ticker-wrapper">
             <marquee behavior="scroll" direction="left" scrollamount="6">
                 <div style="display: flex; align-items: center; padding-top: 2px;">
                     {''.join(ticker_items)}
@@ -366,9 +279,46 @@ if not df_master.empty:
             </marquee>
         </div>
         """
-        st.markdown(marquee_html, unsafe_allow_html=True)
 
-        st.markdown("<div class='custom-subheader' style='margin-top: 15px;'>Papan Pantau Peringatan Dini</div>", unsafe_allow_html=True)
+        # Membentuk HTML Backdrop Pasar
+        backdrop_html = f"""
+<div class="top-backdrop">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
+<div style="flex: 1; min-width: 120px; max-width: 120px;">
+<img src="https://drive.google.com/uc?export=view&id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY" style="width: 100%;">
+</div>
+<div style="flex: 8; min-width: 300px;">
+<div style="margin:0; padding:0; line-height: 1.1; font-size: 3.2rem; font-weight:bold; color: #FFFFFF;">BI - RAJAWALI</div>
+<div style="margin:0; padding:0; color: #ff6b6b; margin-bottom: 8px; font-size: 1.6rem; font-weight:bold;">Radar Gejolak Harga Waspada Inflasi</div>
+<p style="font-size: 1.2rem; opacity: 0.9; margin:0; color: #FFFFFF;">Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>
+</div>
+</div>
+<div class="radar-box-transparent">
+<div style="margin-top: 0; margin-bottom: 25px; font-size: 2rem; font-weight: bold; color: #FFFFFF;">Radar Fluktuasi Harga</div>
+<div style="display: flex; flex-wrap: wrap; gap: 20px;">
+<div style="flex: 1; min-width: 200px;">
+<p style="margin: 0; font-size: 15px; opacity: 0.9; color: #FFFFFF;">Status Komoditas</p>
+<div style="margin: 0; font-size: 2.2rem; font-weight:bold; color: {warna_risiko};">{komoditas_bermasalah} Berisiko</div>
+<p style="margin: 0; font-size: 14px; opacity: 0.8; color: #FFFFFF;">Bulan Depan: {bln_proj_terdekat_str}</p>
+</div>
+<div style="flex: 1; min-width: 200px;">
+<p style="margin: 0; font-size: 15px; opacity: 0.9; color: #FFFFFF;">Total Pantauan</p>
+<div style="margin: 0; font-size: 2.2rem; font-weight:bold; color: #FFFFFF;">{len(list_komoditas)} Komoditas</div>
+<p style="margin: 0; font-size: 14px; opacity: 0.8; color: #FFFFFF;">Harga & Pasokan</p>
+</div>
+<div style="flex: 1; min-width: 200px;">
+<p style="margin: 0; font-size: 15px; opacity: 0.9; color: #FFFFFF;">Sistem Prediksi</p>
+<div style="margin: 0; font-size: 2.2rem; font-weight:bold; color: #FFFFFF;">Aktif 🟢</div>
+<p style="margin: 0; font-size: 14px; opacity: 0.8; color: #FFFFFF;">SARIMAX Terkalibrasi</p>
+</div>
+</div>
+</div>
+</div>
+"""
+        # Render Backdrop dan Marquee dalam satu panggian st.markdown agar menempel tanpa celah
+        st.markdown(backdrop_html + marquee_html, unsafe_allow_html=True)
+
+        st.markdown("<div class='custom-subheader'>Papan Pantau Peringatan Dini</div>", unsafe_allow_html=True)
 
         col_s, col_f, col_so = st.columns([4, 3, 3])
         with col_s:
@@ -428,7 +378,6 @@ if not df_master.empty:
 
                 link_foto = kamus_foto.get(str(kom).lower(), "")
                 
-                # PERHATIAN: Semua baris HTML diletakkan di tepi kiri
                 card_html = f"""
 <div style="position: relative; overflow: hidden; border: 2px solid {warna_border}; border-radius: 10px; padding: 15px; background-color: {warna_bg}; margin-bottom: 10px; color: inherit;">
 <img src="{link_foto}" style="position: absolute; right: 0; top: 0; height: 100%; width: 45%; object-fit: cover; object-position: right center; opacity: 0.25; z-index: 0; -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 80%); mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 80%);">
@@ -453,7 +402,6 @@ if not df_master.empty:
         komoditas = st.session_state.selected_komoditas
         icon_detail = get_icon(komoditas)
 
-        # Tombol kembali dinaikkan ke atas judul
         st.button("Kembali", on_click=go_to_home, type="secondary")
 
         st.markdown(f"<div style='font-size:2rem; font-weight:bold; margin-top:10px; margin-bottom:20px; color:inherit; display:flex; align-items:center; gap:12px;'>{icon_detail} Analisis Detail EWS: {komoditas}</div>", unsafe_allow_html=True)
@@ -491,7 +439,6 @@ if not df_master.empty:
 
         col1, col2, col3, col4 = st.columns(4)
 
-        # Status warna dinamis di card Detail
         status_lower = str(status_terkini).lower()
         if status_lower in ['kritis']:
             warna_status_detail = "#FF4B4B"

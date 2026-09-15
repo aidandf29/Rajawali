@@ -1,852 +1,678 @@
-"""
-SIKABI — Sistem Intelijen Karier Bank Indonesia
-Transformasi Digital Manajemen Karier Pegawai Bank Indonesia
-
-Jalankan lokal:
-    streamlit run app.py
-"""
-
-import io
-import os
-import base64
-
-import pandas as pd
-import plotly.graph_objects as go
 import streamlit as st
-from PIL import Image
+import pandas as pd
+import numpy as np
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import warnings
 
-from scoring import (
-    ADMIN_CHECK_LABELS,
-    KPP_CHECK_LABELS,
-    KUADRAN_DESC,
-    READINESS_COLOR,
-    READINESS_ORDER,
-    compute_all,
-)
+warnings.filterwarnings('ignore')
 
-BASE_DIR = os.path.dirname(__file__)
-DATA_PATH = os.path.join(BASE_DIR, "data", "sikabi_data.xlsx")
-SIDEBAR_LOGO_PATH = os.path.join(BASE_DIR, "assets", "Sikabi.png")
-HERO_LOGO_PATH = os.path.join(BASE_DIR, "assets", "logo header.png")
-HERO_BG_PATH = os.path.join(BASE_DIR, "assets", "background.png")
-
-REF_SHEETS = [
-    "Quant_Weights", "Qual_Weights", "Rank_Weights",
-    "Education_Score", "Certification_Score", "K3_Score", "Potensi_Score", "Thresholds",
-]
-
-# ---------------------------------------------------------------------------
-# Design tokens
-# ---------------------------------------------------------------------------
-INK = "#1B2733"
-INK_SOFT = "#63707C"
-LINE = "#E6E8EA"
-SURFACE = "#FFFFFF"
-CANVAS = "#F5F6F4"
-BRAND = "#1E3A52"
-BRAND_DEEP = "#E6F0F3"
-BRAND_DEEP_TEXT = "#173449"
-TEAL = "#2F7A6F"
-AMBER = "#B9821F"
-RED = "#B0574A"
-
-KUADRAN_COLOR = {"I": "#2F7A6F", "II": "#6E9750", "III": "#B9821F", "IV": "#B0574A"}
-KUADRAN_BG = {"I": "#EEF7F5", "II": "#F1F6EC", "III": "#FBF5E9", "IV": "#FAEFEC"}
-
-logo_img = Image.open(SIDEBAR_LOGO_PATH) if os.path.exists(SIDEBAR_LOGO_PATH) else None
-
+# ==========================================
+# 0. KONFIGURASI HALAMAN
+# ==========================================
 st.set_page_config(
-    page_title="SIKABI",
-    page_icon=logo_img if logo_img else "🏦",
-    layout="wide",
-    initial_sidebar_state="expanded",
+    page_title="BI - RAJAWALI", 
+    page_icon="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w128", 
+    layout="wide"
 )
 
-# ---------------------------------------------------------------------------
-# Global styling
-# ---------------------------------------------------------------------------
-st.markdown(
-    f"""
-    <style>
-    #MainMenu {{visibility: hidden;}}
-    footer {{visibility: hidden;}}
-    header[data-testid="stHeader"] {{background: transparent;}}
+# Styling CSS 
+st.markdown("""
+<style>
+/* 1. KONTROL PADDING STREAMLIT AGAR BANNER BISA NAIK KE ATAS */
+.block-container {
+    padding-top: 2rem !important; 
+    padding-bottom: 0rem !important;
+}
 
-    .stApp {{ background: {CANVAS}; }}
-    html, body, [class*="css"] {{ font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }}
+/* MENURUNKAN TOMBOL SIDEBAR AGAR TIDAK KETUTUP LOGO */
+[data-testid="collapsedControl"] {
+    top: 70px !important; 
+}
 
-    h1, h2, h3, h4 {{ color: {INK}; font-weight: 600; }}
-    p, span, label, div {{ color: {INK}; }}
+/* 2. MENGHILANGKAN IKON RANTAI (ANCHOR LINK) STREAMLIT */
+a.header-anchor, .st-emotion-cache-10trblm a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+    display: none !important;
+    visibility: hidden !important;
+}
 
-    /* Sidebar */
-    section[data-testid="stSidebar"] {{
-        background: {BRAND_DEEP};
-        border-right: none;
-    }}
-    section[data-testid="stSidebar"] * {{ color: {BRAND_DEEP_TEXT} !important; }}
-    section[data-testid="stSidebar"] hr {{ border-color: rgba(15,33,48,0.14); }}
+/* 3. LOGO HEADER BAWAAN STREAMLIT (Kiri Atas) */
+[data-testid="stHeader"] {
+    background-image: url('https://drive.google.com/thumbnail?id=1sbqabWaTANwaFfSd5hExupqoA_joEzBk&sz=w400');
+    background-repeat: no-repeat;
+    background-position: 20px center;
+    background-size: auto 65%;
+    background-color: transparent;
+}
 
-    /* Buttons */
-    .stButton > button, .stDownloadButton > button {{
-        border-radius: 8px;
-        border: 1px solid {LINE};
-        background: {SURFACE};
-        color: {INK};
-        font-weight: 500;
-        padding: 0.45rem 1rem;
-    }}
-    .stButton > button:hover, .stDownloadButton > button:hover {{
-        border-color: {TEAL};
-        color: {TEAL};
-    }}
-    section[data-testid="stSidebar"] .stButton > button,
-    section[data-testid="stSidebar"] .stDownloadButton > button {{
-        background: rgba(255,255,255,0.55) !important;
-        border: 1px solid rgba(15,33,48,0.16) !important;
-        color: #173449 !important;
-        width: 100%;
-        text-align: left;
-        justify-content: flex-start;
-    }}
-    section[data-testid="stSidebar"] .stButton > button:hover,
-    section[data-testid="stSidebar"] .stDownloadButton > button:hover {{
-        background: rgba(255,255,255,0.85) !important;
-        border-color: rgba(15,33,48,0.28) !important;
-        color: #173449 !important;
-    }}
-    section[data-testid="stSidebar"] .stButton > button:disabled {{
-        opacity: 0.45 !important;
-        color: #FFFFFF !important;
-    }}
-    section[data-testid="stSidebar"] button[kind="primary"],
-    section[data-testid="stSidebar"] button[kind="primary"]:hover {{
-        background: {TEAL} !important;
-        border: 1px solid {TEAL} !important;
-        color: #FFFFFF !important;
-        font-weight: 600;
-    }}
+/* 4. BACKDROP PASAR (Adaptif & Teks Putih Permanen) */
+.top-backdrop {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -65px; 
+    padding: 60px 10% 40px 10%; 
+    background-image: url('https://drive.google.com/thumbnail?id=151ji3lJmqLu_A9FyWsMQMgdYoNkpBy3E&sz=w1920');
+    background-size: cover;
+    background-position: center 30%;
+    /* Memaksa teks jadi putih dan diberi bayangan agar kontras menonjol */
+    color: #FFFFFF !important;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 1;
+}
+.top-backdrop::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--background-color);
+    opacity: 0.88; 
+    z-index: -1;
+}
 
-    /* Primary-styled buttons (kind=primary) */
-    button[kind="primary"] {{
-        background: {TEAL} !important;
-        border-color: {TEAL} !important;
-        color: #FFFFFF !important;
-    }}
+/* Kotak Radar Transparan (Lebih Gelap & Blur Kuat agar teks terbaca) */
+.radar-box-transparent {
+    background-color: rgba(0, 0, 0, 0.45); 
+    padding: 30px; 
+    border-radius: 12px; 
+    margin-top: 30px;
+    border-left: 6px solid #FFD700;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #FFFFFF !important;
+}
 
-    /* Multiselect / select tags: replace default red accent with brand teal */
-    span[data-baseweb="tag"] {{
-        background-color: {TEAL} !important;
-        color: #FFFFFF !important;
-        border-radius: 6px !important;
-    }}
-    span[data-baseweb="tag"] svg {{ fill: #FFFFFF !important; }}
-    ul[data-baseweb="menu"] li:hover {{ background-color: rgba(47,122,111,0.12) !important; }}
-    div[data-baseweb="select"] > div {{
-        border-radius: 8px !important;
-        border-color: {LINE} !important;
-    }}
-    div[data-baseweb="select"]:hover > div {{ border-color: {TEAL} !important; }}
+/* 5. FOOTER AMPERA */
+.footer-wrapper {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: 60px;
+    padding: 16px 0;
+    text-align: center;
+    border-top: 1px solid rgba(150, 150, 150, 0.2);
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.7;
+}
 
-    /* Tabs */
-    button[data-baseweb="tab"] {{ font-weight: 500; color: {INK_SOFT}; }}
-    button[data-baseweb="tab"][aria-selected="true"] {{ color: {BRAND}; }}
-    div[data-baseweb="tab-highlight"] {{ background-color: {TEAL} !important; }}
+.footer-text-bar {
+    width: 100%;
+    padding: 200px 0 14px 0;
+    text-align: center;
+    border-top: 1px solid rgba(150, 150, 150, 0.2);
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.7;
+    background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: 100% auto;
+    filter: brightness(0) invert(0.5);
+}
+.footer-container {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    height: 400px;
+    margin-top: 60px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 25px;
+    border-top: 1px solid rgba(150, 150, 150, 0.2);
+    overflow: hidden;
+}
+.footer-bg-siluet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://drive.google.com/thumbnail?id=1bV8mSpmSJ2ox5mfu9XHsDvrBXUWBFp_X&sz=w1920');
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: contain;
+    filter: brightness(0) invert(0.5);
+    opacity: 0.15;
+    transform: translateY(0%);
+    z-index: 0;
+    pointer-events: none;
+}
+.footer-text {
+    position: relative;
+    z-index: 1;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.7;
+}
 
-    /* Dataframe container */
-    div[data-testid="stDataFrame"] {{
-        border: 1px solid {LINE};
-        border-radius: 10px;
-        overflow: hidden;
-    }}
+/* Judul Kustom Pengganti st.subheader (Anti Ikon Rantai) */
+.custom-subheader {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    color: inherit;
+}
 
-    /* Custom card */
-    .sikabi-card {{
-        background: {SURFACE};
-        border: 1px solid {LINE};
-        border-radius: 12px;
-        padding: 18px 20px;
-        box-shadow: 0 1px 2px rgba(16,24,32,0.04);
-    }}
-    .sikabi-metric-label {{
-        color: {INK_SOFT}; font-size: 12.5px; font-weight: 500;
-        text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;
-    }}
-    .sikabi-metric-value {{ font-size: 30px; font-weight: 700; line-height: 1.1; color: {INK}; }}
-    .sikabi-metric-sub {{ color: {INK_SOFT}; font-size: 12.5px; margin-top: 6px; }}
+/* Styling Filter Emas Adaptif (Aman di Light/Dark Mode) */
+span[data-baseweb="tag"] { background-color: var(--secondary-background-color) !important; border: 1.5px solid #FFD700 !important; color: var(--text-color) !important; }
+span[data-baseweb="tag"] span { color: var(--text-color) !important; }
+span[data-baseweb="tag"] svg { fill: var(--text-color) !important; }
 
-    .sikabi-quad-row {{
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 12px 14px; border: 1px solid {LINE}; border-radius: 10px;
-        margin-bottom: 8px; background: {SURFACE};
-        transition: border-color 0.15s ease, background 0.15s ease;
-    }}
-    .sikabi-quad-row.quad-I {{ background: #EEF7F5; border-color: #B7D9D3; }}
-    .sikabi-quad-row.quad-II {{ background: #F1F6EC; border-color: #C9DDBB; }}
-    .sikabi-quad-row.quad-III {{ background: #FBF5E9; border-color: #E5C98E; }}
-    .sikabi-quad-row.quad-IV {{ background: #FAEFEC; border-color: #DFB8AF; }}
-    .sikabi-dot {{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:8px; }}
+/* 6. SCROLLBAR MENYAMAR (Tipis & Membaur) */
+::-webkit-scrollbar { width: 8px; height: 8px; background-color: transparent; }
+::-webkit-scrollbar-track { background-color: transparent; }
+::-webkit-scrollbar-thumb { background-color: rgba(150, 150, 150, 0.4); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background-color: rgba(150, 150, 150, 0.7); }
+</style>
+""", unsafe_allow_html=True)
 
-    /* Rajawali-inspired dashboard hero */
-    /* Use the available main canvas more fully */
-    .block-container {{
-        max-width: 100% !important;
-        padding-left: 1.25rem !important;
-        padding-right: 1.25rem !important;
-        padding-top: 0 !important;
-    }}
-    .sikabi-hero {{
-        width: calc(100% + 2.5rem);
-        min-height: 385px;
-        margin: -0.95rem -1.25rem 1.25rem -1.25rem;
-        background-size: cover;
-        background-position: center 45%;
-        border-radius: 0 0 14px 14px;
-        overflow: hidden;
-        box-shadow: 0 8px 24px rgba(15,33,48,0.14);
-        color: #FFFFFF !important;
-    }}
-    .sikabi-hero-inner {{
-        padding: 34px 40px 30px 40px;
-    }}
-    .sikabi-brand-row {{
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        max-width: 1180px;
-    }}
-    .sikabi-hero-logo {{
-        flex: 0 0 250px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.28));
-    }}
-    .sikabi-hero-title {{
-        font-size: 3.15rem;
-        line-height: 1.05;
-        font-weight: 800;
-        letter-spacing: -0.03em;
-        color: #FFFFFF !important;
-        text-shadow: 1px 2px 5px rgba(0,0,0,0.42);
-    }}
-    .sikabi-hero-subtitle {{
-        margin-top: 5px;
-        font-size: 1.35rem;
-        font-weight: 700;
-        color: #D8F0EC !important;
-        text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
-    }}
-    .sikabi-hero-description {{
-        margin-top: 10px;
-        max-width: 900px;
-        font-size: 1rem;
-        line-height: 1.55;
-        color: rgba(255,255,255,0.92) !important;
-        text-shadow: 1px 1px 4px rgba(0,0,0,0.55);
-    }}
-    .sikabi-hero-panel {{
-        margin-top: 24px;
-        padding: 20px 24px 18px 24px;
-        border-radius: 14px;
-        background: rgba(8,18,25,0.58);
-        border: 1px solid rgba(255,255,255,0.17);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.18);
-        backdrop-filter: blur(9px);
-    }}
-    .sikabi-hero-panel-title {{
-        font-size: 1.35rem;
-        font-weight: 750;
-        color: #FFFFFF !important;
-        margin-bottom: 20px;
-    }}
-    .sikabi-hero-metrics {{
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 26px;
-    }}
-    .hero-label {{
-        font-size: 0.82rem;
-        color: rgba(255,255,255,0.72) !important;
-        margin-bottom: 5px;
-    }}
-    .hero-value {{
-        font-size: 1.75rem;
-        line-height: 1.05;
-        font-weight: 800;
-        color: #FFFFFF !important;
-    }}
-    .hero-teal {{ color: #6FC5B8 !important; }}
-    .hero-red {{ color: #E78C7E !important; }}
-    .hero-sub {{
-        margin-top: 5px;
-        font-size: 0.78rem;
-        color: rgba(255,255,255,0.62) !important;
-    }}
-    @media (max-width: 900px) {{
-        .block-container {{
-            padding-left: 0.75rem !important;
-            padding-right: 0.75rem !important;
-        }}
-        .sikabi-hero {{
-            width: calc(100% + 1.5rem);
-            margin-left: -0.75rem;
-            margin-right: -0.75rem;
-        }}
-        .sikabi-hero-inner {{ padding: 28px 24px 24px 24px; }}
-        .sikabi-brand-row {{ align-items: flex-start; }}
-        .sikabi-hero-title {{ font-size: 2.4rem; }}
-        .sikabi-hero-subtitle {{ font-size: 1.05rem; }}
-        .sikabi-hero-metrics {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# State Management
+if 'page' not in st.session_state: st.session_state.page = 'Beranda'
+if 'selected_komoditas' not in st.session_state: st.session_state.selected_komoditas = None
 
+def go_to_detail(komoditas):
+    st.session_state.selected_komoditas = komoditas
+    st.session_state.page = 'Detail'
 
-def _img_b64(path):
-    if not os.path.exists(path):
-        return None
-    with open(path, "rb") as f:
-        return base64.b64encode(f.read()).decode("utf-8")
+def go_to_home():
+    st.session_state.page = 'Beranda'
+    st.session_state.selected_komoditas = None
 
+# ==========================================
+# FUNGSI ICONIFY
+# ==========================================
+def get_icon(nama_komoditas):
+    nama = str(nama_komoditas).lower()
+    
+    icon_code = "mdi:package-variant-closed" 
+    if 'telur' in nama: icon_code = "mdi:egg"
+    elif 'cabai rawit' in nama or 'cabe rawit' in nama: icon_code = "ph:pepper"
+    elif 'cabai' in nama or 'cabe' in nama: icon_code = "tabler:pepper"
+    elif 'beras' in nama: icon_code = "tdesign:rice"
+    elif 'bawang merah' in nama: icon_code = "lucide-lab:onion"
+    elif 'bawang putih' in nama: icon_code = "lucide-lab:garlic"
+    elif 'ayam' in nama: icon_code = "mdi:food-drumstick"
+    elif 'sapi' in nama or 'daging' in nama: icon_code = "mdi:cow"
+    elif 'minyak' in nama: icon_code = "mdi:oil"
+    elif 'gula' in nama: icon_code = "mdi:cube-outline"
+    elif 'jagung' in nama: icon_code = "mdi:corn"
+    elif 'kedelai' in nama: icon_code = "mdi:leaf"
 
-LOGO_B64 = _img_b64(HERO_LOGO_PATH)
-HERO_BG_B64 = _img_b64(HERO_BG_PATH)
+    parts = icon_code.split(':')
+    prefix = parts[0]
+    name = ":".join(parts[1:])
+    url = f"https://api.iconify.design/{prefix}/{name}.svg"
+    
+    # HTML tanpa spasi awal
+    html_icon = f"""
+<span style="display: inline-block; width: 1.25em; height: 1.25em; background-color: currentColor; -webkit-mask: url({url}) no-repeat center / contain; mask: url({url}) no-repeat center / contain; vertical-align: text-bottom;"></span>
+"""
+    return html_icon
 
+# ==========================================
+# 1. LOAD DATA SOURCE
+# ==========================================
+@st.cache_data
+def load_data():
+    file_path = 'Forecast_EWS_10_Komoditas_2024_2026-3 Terbaru.xlsx'
+    try:
+        df = pd.read_excel(file_path, sheet_name='forecast_all')
+    except:
+        try:
+            df = pd.read_excel(file_path)
+        except Exception as ex:
+            st.error(f"Gagal membaca file: {ex}")
+            return pd.DataFrame()
 
-def page_header(title):
-    """Render a clean page title without a duplicate logo above it."""
-    st.markdown(f"## {title}")
+    df.columns = [c.lower() for c in df.columns]
+    if 'bulan_tahun' in df.columns:
+        df['bulan_tahun'] = pd.to_datetime(df['bulan_tahun'], errors='coerce')
+    return df
 
+df_master = load_data()
 
-def dashboard_hero(df):
-    """Rajawali-inspired hero banner using the local SIKABI background asset."""
-    total = len(df)
-    admin = int(df["Lolos_Administrasi"].sum())
-    kpp = int(df["Lolos_KPP"].sum())
-    gt = int((df["Status_Akhir"] == "General Talent").sum())
+if not df_master.empty:
+    col_komoditas = 'komoditas' if 'komoditas' in df_master.columns else 'komoditas_pangan'
+    list_komoditas = sorted(df_master[col_komoditas].dropna().unique())
 
-    bg = f"data:image/png;base64,{HERO_BG_B64}" if HERO_BG_B64 else ""
-    logo = f"data:image/png;base64,{LOGO_B64}" if LOGO_B64 else ""
+    df_global_hist = df_master[df_master['actual'] > 0]
+    df_global_proj = df_master[(df_master['actual'] == 0) | (df_master['actual'].isna())]
+    df_global_proj = df_global_proj[df_global_proj['forecast'] > 0]
 
-    logo_html = (
-        f'<img src="{logo}" style="width:250px; max-width:100%; max-height:105px; object-fit:contain; object-position:left center;">'
-        if logo else ""
-    )
+    # ==========================================
+    # HALAMAN 1: BERANDA
+    # ==========================================
+    if st.session_state.page == 'Beranda':
 
-    hero_html = f"""
-    <div class="sikabi-hero" style="background-image:linear-gradient(90deg, rgba(7,24,36,0.82) 0%, rgba(7,24,36,0.66) 45%, rgba(7,24,36,0.58) 100%), url('{bg}');">
-        <div class="sikabi-hero-inner">
-            <div class="sikabi-brand-row">
-                <div class="sikabi-hero-logo">{logo_html}</div>
-                <div>
-                    <div class="sikabi-hero-title">SIKABI</div>
-                    <div class="sikabi-hero-subtitle">Sistem Intelijen Karier Bank Indonesia</div>
-                    <div class="sikabi-hero-description">Dashboard intelijen karier untuk mendukung analisis potensi, kesiapan promosi, dan prioritisasi kandidat KPP secara terintegrasi.</div>
+        komoditas_bermasalah = 0
+        bln_proj_terdekat_str = "-"
+        if not df_global_proj.empty:
+            bln_proj_terdekat = df_global_proj['bulan_tahun'].min()
+            df_proj_terdekat = df_global_proj[df_global_proj['bulan_tahun'] == bln_proj_terdekat]
+            komoditas_bermasalah = df_proj_terdekat['ews_status'].astype(str).str.lower().isin(['waspada', 'kritis', 'high price risk']).sum()
+            bln_proj_terdekat_str = bln_proj_terdekat.strftime('%B %Y')
+            
+        warna_risiko = "#FF4B4B" if komoditas_bermasalah > 0 else "#21C354"
+
+        # PERHATIAN: Semua baris HTML diletakkan di tepi kiri agar tidak menjadi Code Block Streamlit
+        backdrop_html = f"""
+<div class="top-backdrop">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
+<div style="flex: 1; min-width: 120px; max-width: 120px;">
+<img src="https://drive.google.com/thumbnail?id=1nAsEcJP4W8C9Qj-pLtY5278YI9iSKabY&sz=w500" style="width: 100%;">
+</div>
+<div style="flex: 8; min-width: 300px; color: inherit;">
+<div style="margin:0; padding:0; line-height: 1.1; font-size: 3.2rem; font-weight:bold;">BI - RAJAWALI</div>
+<div style="margin:0; padding:0; color: #D32F2F; margin-bottom: 8px; font-size: 1.6rem; font-weight:bold;">Radar Gejolak Harga Waspada Inflasi</div>
+<p style="font-size: 1.2rem; opacity: 0.9; margin:0;">Dashboard Early Warning System Sumatera Selatan untuk memantau volatilitas harga dan ketersediaan pasokan secara real-time.</p>
+</div>
+</div>
+<div class="radar-box-transparent">
+<div style="margin-top: 0; margin-bottom: 25px; font-size: 2rem; font-weight: bold;">Radar Fluktuasi Harga</div>
+<div style="display: flex; flex-wrap: wrap; gap: 20px;">
+<div style="flex: 1; min-width: 200px;">
+<p style="margin: 0; font-size: 15px; opacity: 0.8;">Status Komoditas</p>
+<div style="margin: 0; font-size: 2.2rem; font-weight:bold; color: {warna_risiko};">{komoditas_bermasalah} Berisiko</div>
+<p style="margin: 0; font-size: 14px; opacity: 0.7;">Bulan Depan: {bln_proj_terdekat_str}</p>
+</div>
+<div style="flex: 1; min-width: 200px;">
+<p style="margin: 0; font-size: 15px; opacity: 0.8;">Total Pantauan</p>
+<div style="margin: 0; font-size: 2.2rem; font-weight:bold;">{len(list_komoditas)} Komoditas</div>
+<p style="margin: 0; font-size: 14px; opacity: 0.7;">Harga & Pasokan</p>
+</div>
+<div style="flex: 1; min-width: 200px;">
+<p style="margin: 0; font-size: 15px; opacity: 0.8;">Sistem Prediksi</p>
+<div style="margin: 0; font-size: 2.2rem; font-weight:bold;">Aktif 🟢</div>
+<p style="margin: 0; font-size: 14px; opacity: 0.7;">SARIMAX Terkalibrasi</p>
+</div>
+</div>
+</div>
+</div>
+"""
+        st.markdown(backdrop_html, unsafe_allow_html=True)
+
+        kamus_foto = {
+            "beras": "https://drive.google.com/thumbnail?id=1u-NKeYa2kDo8EWvIsqWqk3YmE38D6mi1&sz=w800",
+            "cabai merah": "https://drive.google.com/thumbnail?id=1SxPyn-4Ib8nsn4-bdbR3S8jxAeqj3paN&sz=w800",
+            "cabai rawit": "https://drive.google.com/thumbnail?id=12AvNJA9f20B64DrRp1rmpMLecrLvDxHa&sz=w800",
+            "telur ayam": "https://drive.google.com/thumbnail?id=1uFGm8hueEjZp0fmc23uSdUmUc4E9F95P&sz=w800",
+            "daging ayam": "https://drive.google.com/thumbnail?id=1koQ53csAw90x11A_kq6M513oDmI8vaU7&sz=w800",
+            "daging sapi": "https://drive.google.com/thumbnail?id=1JB9BDUIotFHaSu54RCEKFmH-BICSyola&sz=w800",
+            "bawang putih": "https://drive.google.com/thumbnail?id=1DX-EKXX-2ugC9i60xWAqT8KbiQHrWVQW&sz=w800",
+            "bawang merah": "https://drive.google.com/thumbnail?id=1jgF0fysWvYAzgidQrZTvhE2NfrTkPL9e&sz=w800",
+            "gula pasir": "https://drive.google.com/thumbnail?id=1IBT08J_OzlGmx8MCko1kCh_-5WCxC5uR&sz=w800",
+            "minyak goreng": "https://drive.google.com/thumbnail?id=16v_ASoABYlIlkuwxUS4mDA0MP0NlYp6X&sz=w800"
+        }
+
+        komoditas_summary = []
+        for kom in list_komoditas:
+            df_k = df_master[df_master[col_komoditas] == kom].sort_values('bulan_tahun')
+            df_k_hist = df_k[df_k['actual'] > 0]
+            df_k_proj = df_k[(df_k['actual'] == 0) | (df_k['actual'].isna())]
+            df_k_proj = df_k_proj[df_k_proj['forecast'] > 0]
+
+            harga_n = df_k_hist['actual'].iloc[-1] if not df_k_hist.empty else 0
+            harga_n1 = df_k_proj['forecast'].iloc[0] if not df_k_proj.empty else harga_n
+            delta_n1 = ((harga_n1 - harga_n) / harga_n) * 100 if harga_n > 0 else 0
+
+            status_k = "Aman"
+            if not df_k_proj.empty and 'ews_status' in df_k_proj.columns:
+                status_k = str(df_k_proj['ews_status'].iloc[0]).title()
+
+            if status_k.lower() == 'high price risk':
+                status_k = 'Waspada'
+
+            komoditas_summary.append({
+                'nama': kom,
+                'harga_n': harga_n,
+                'harga_n1': harga_n1,
+                'delta_n1': delta_n1,
+                'status': status_k,
+                'icon': get_icon(kom)
+            })
+
+        # ==========================================
+        # RUNNING TEXT / TICKER KOMODITAS (EDGE-TO-EDGE)
+        # ==========================================
+        ticker_items = []
+        for k in komoditas_summary:
+            warna_inflasi = "#FF4B4B" if k['delta_n1'] > 0 else "#21C354"
+            tanda_inflasi = "▲" if k['delta_n1'] > 0 else "▼" if k['delta_n1'] < 0 else "-"
+            # Layout flex agar iconify sejajar presisi dengan teks
+            item = f"<div style='display:inline-flex; align-items:center; margin-right: 35px; font-size: 16px; font-weight: 600;'>{k['icon']}&nbsp;<span style='margin-left: 5px; margin-right: 5px;'>{k['nama']}</span> <span style='color:{warna_inflasi};'> {tanda_inflasi} {k['delta_n1']:+.2f}%</span></div>"
+            ticker_items.append(item)
+            
+        # PENGGANTIAN CSS inline agar melebar dari ujung ke ujung & punya bayangan (shadow)
+        marquee_html = f"""
+        <div style="width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; background-color: var(--secondary-background-color); border-top: 1px solid rgba(150,150,150,0.2); border-bottom: 1px solid rgba(150,150,150,0.2); padding: 12px 0; margin-top: 5px; margin-bottom: 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); color: var(--text-color); z-index: 2;">
+            <marquee behavior="scroll" direction="left" scrollamount="6">
+                <div style="display: flex; align-items: center; padding-top: 2px;">
+                    {''.join(ticker_items)}
                 </div>
-            </div>
-
-            <div class="sikabi-hero-panel">
-                <div class="sikabi-hero-panel-title">Dashboard Kuadran &amp; Laporan</div>
-                <div class="sikabi-hero-metrics">
-                    <div><div class="hero-label">Total Populasi</div><div class="hero-value">{total:,}</div><div class="hero-sub">Periode 2026 semester II</div></div>
-                    <div><div class="hero-label">Lolos Administrasi</div><div class="hero-value">{admin:,}</div><div class="hero-sub">{df['Lolos_Administrasi'].mean()*100:.0f}% dari populasi</div></div>
-                    <div><div class="hero-label">Lolos Kriteria KPP</div><div class="hero-value hero-teal">{kpp:,}</div><div class="hero-sub">Kandidat lolos kriteria</div></div>
-                    <div><div class="hero-label">General Talent</div><div class="hero-value hero-red">{gt:,}</div><div class="hero-sub">Talent pool</div></div>
-                </div>
-            </div>
+            </marquee>
         </div>
-    </div>
-    """
-    # st.html renders the hero as real HTML instead of allowing Markdown to escape
-    # nested divs (which caused the panel markup to appear as literal text).
-    if hasattr(st, "html"):
-        st.html(hero_html)
-    else:
-        st.markdown(hero_html, unsafe_allow_html=True)
+        """
+        st.markdown(marquee_html, unsafe_allow_html=True)
 
+        st.markdown("<div class='custom-subheader' style='margin-top: 15px;'>Papan Pantau Peringatan Dini</div>", unsafe_allow_html=True)
 
-def metric_card(label, value, sub=None, accent=None):
-    color = accent or INK
-    sub_html = f'<div class="sikabi-metric-sub">{sub}</div>' if sub else ""
-    st.markdown(
-        f"""
-        <div class="sikabi-card">
-            <div class="sikabi-metric-label">{label}</div>
-            <div class="sikabi-metric-value" style="color:{color}">{value}</div>
-            {sub_html}
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+        col_s, col_f, col_so = st.columns([4, 3, 3])
+        with col_s:
+            search_query = st.text_input("Pencarian Komoditas", placeholder="Ketik nama komoditas...")
+        with col_f:
+            filter_status = st.multiselect("Filter Status", options=["Aman", "Waspada", "Kritis"], placeholder="Semua Status")
+        with col_so:
+            sort_by = st.selectbox("Urutkan Berdasarkan", options=["Nama (A - Z)", "Nama (Z - A)", "Status (Kritis - Aman)", "Status (Aman - Kritis)"])
 
+        st.markdown("<hr style='margin-top: 5px; margin-bottom: 25px; opacity: 0.3;'>", unsafe_allow_html=True)
 
-# ---------------------------------------------------------------------------
-# State & data loading
-# ---------------------------------------------------------------------------
-def load_workbook(path):
-    return pd.read_excel(path, sheet_name=None)
+        if search_query:
+            komoditas_summary = [k for k in komoditas_summary if search_query.lower() in k['nama'].lower()]
 
+        if filter_status:
+            komoditas_summary = [k for k in komoditas_summary if k['status'] in filter_status]
 
-def init_state():
-    if "data_loaded" not in st.session_state:
-        sheets = load_workbook(DATA_PATH)
-        st.session_state.employees = sheets["Employees"]
-        for name in REF_SHEETS:
-            st.session_state[f"ref_{name}"] = sheets[name]
-        st.session_state.data_loaded = True
+        def priority(s):
+            s = s.lower()
+            if s == 'kritis': return 1
+            if s == 'waspada': return 2
+            return 3
 
+        if sort_by == "Nama (A - Z)":
+            komoditas_summary.sort(key=lambda x: x['nama'])
+        elif sort_by == "Nama (Z - A)":
+            komoditas_summary.sort(key=lambda x: x['nama'], reverse=True)
+        elif sort_by == "Status (Kritis - Aman)":
+            komoditas_summary.sort(key=lambda x: (priority(x['status']), x['nama']))
+        elif sort_by == "Status (Aman - Kritis)":
+            komoditas_summary.sort(key=lambda x: (priority(x['status']), x['nama']), reverse=True)
 
-def get_refs():
-    return {name: st.session_state[f"ref_{name}"] for name in REF_SHEETS}
+        if len(komoditas_summary) == 0:
+            st.info("Tidak ada komoditas yang sesuai dengan kriteria pencarian Anda.")
+        else:
+            cols = st.columns(4)
+            for idx, k in enumerate(komoditas_summary):
+                kom = k['nama']
+                harga_n = k['harga_n']
+                harga_n1 = k['harga_n1']
+                delta_n1 = k['delta_n1']
+                status_k = k['status']
+                icon = k['icon']
 
-
-def recompute():
-    return compute_all(st.session_state.employees, get_refs())
-
-
-def save_to_disk():
-    with pd.ExcelWriter(DATA_PATH, engine="openpyxl") as writer:
-        st.session_state.employees.to_excel(writer, sheet_name="Employees", index=False)
-        for name in REF_SHEETS:
-            st.session_state[f"ref_{name}"].to_excel(writer, sheet_name=name, index=False)
-
-
-def workbook_bytes():
-    buf = io.BytesIO()
-    with pd.ExcelWriter(buf, engine="openpyxl") as writer:
-        st.session_state.employees.to_excel(writer, sheet_name="Employees", index=False)
-        for name in REF_SHEETS:
-            st.session_state[f"ref_{name}"].to_excel(writer, sheet_name=name, index=False)
-    return buf.getvalue()
-
-
-def df_to_xlsx_bytes(dframe):
-    buf = io.BytesIO()
-    dframe.to_excel(buf, index=False)
-    return buf.getvalue()
-
-
-init_state()
-df = recompute()
-
-PANGKAT_OPTS = sorted(df["Pangkat"].dropna().unique().tolist())
-SATKER_OPTS = sorted(df["Satker"].dropna().unique().tolist())
-STATUS_OPTS = ["Proses KPP", "Ready Promosi Grade", "Belum Siap Promosi Grade", "General Talent"]
-
-
-# ---------------------------------------------------------------------------
-# Sidebar navigation
-# ---------------------------------------------------------------------------
-with st.sidebar:
-    if logo_img:
-        st.image(logo_img, use_container_width=True)
-    else:
-        st.markdown("### 🏦 SIKABI")
-
-    st.markdown(
-        "<div style='text-align:center;font-size:12px;color:rgba(255,255,255,0.55);"
-        "margin-top:-6px;margin-bottom:14px;'>DSDM · Bank Indonesia</div>",
-        unsafe_allow_html=True,
-    )
-
-    NAV_ITEMS = [
-        ("Dashboard", "dashboard"),
-        ("Data Pegawai", "group"),
-        ("Penentuan Kandidat KPP", "verified_user"),
-        ("Pengaturan", "database"),
-    ]
-
-    if "nav_page" not in st.session_state:
-        st.session_state.nav_page = "Dashboard"
-
-    for label, icon_name in NAV_ITEMS:
-        is_active = st.session_state.nav_page == label
-        if st.button(
-            label,
-            icon=f":material/{icon_name}:",
-            key=f"nav_{label}",
-            use_container_width=True,
-            type="primary" if is_active else "secondary",
-        ):
-            st.session_state.nav_page = label
-            st.rerun()
-
-    page = st.session_state.nav_page
-
-    st.divider()
-    st.caption(f"Total pegawai ·  **{len(df):,}**".replace(",", "."))
-    st.caption(f"Lolos administrasi ·  **{int(df['Lolos_Administrasi'].sum()):,}**".replace(",", "."))
-    st.caption(f"Proses KPP ·  **{int(df['Masuk_Proses_KPP'].sum()):,}**".replace(",", "."))
-    st.divider()
-
-    st.download_button(
-        "Unduh data (.xlsx)",
-        icon=":material/download:",
-        data=workbook_bytes(),
-        file_name="sikabi_data.xlsx",
-        use_container_width=True,
-    )
-    st.button(
-        "Sinkronisasi data dengan HRIS & KATALIS",
-        icon=":material/sync:",
-        use_container_width=True,
-        disabled=True,
-        help="Integrasi belum tersedia — memerlukan koneksi API HRIS dan KATALIS BI.",
-    )
-
-
-# ---------------------------------------------------------------------------
-# Page: Dashboard
-# ---------------------------------------------------------------------------
-def page_dashboard(df):
-    dashboard_hero(df)
-
-    st.write("")
-    with st.container(border=True):
-        fcol1, fcol2, fcol3 = st.columns([1, 1, 1.4])
-        f_pangkat = fcol1.multiselect("Pangkat", PANGKAT_OPTS, default=PANGKAT_OPTS)
-        f_satker = fcol2.multiselect("Satuan kerja", SATKER_OPTS, default=SATKER_OPTS)
-        f_kuadran = fcol3.multiselect("Kuadran", ["I", "II", "III", "IV"], default=["I", "II", "III", "IV"])
-
-    kpp_pop = df[df["Masuk_Proses_KPP"]]
-    scoped = kpp_pop[kpp_pop["Pangkat"].isin(f_pangkat) & kpp_pop["Satker"].isin(f_satker)]
-    visible = scoped[scoped["Kuadran"].isin(f_kuadran)]
-
-    st.write("")
-    left, right = st.columns([3, 2])
-
-    with left:
-        with st.container(border=True):
-            st.markdown(f"**Peta Kuadran** &nbsp;·&nbsp; {len(visible)} dari {len(kpp_pop)} pegawai Proses KPP")
-            # st.caption(
-            #     "Hanya pegawai **Grade Senior** yang lolos Kriteria KPP yang masuk di sini "
-            #     "(Grade Reguler mengikuti jalur Promosi Grade tersendiri, lihat tab Penentuan Kandidat KPP). "
-            #     "Sumbu = selisih QScore dan Masa Dinas Pangkat (MDP = MDG + MDGS) terhadap **rata-rata "
-            #     "pangkatnya masing-masing** — bukan rata-rata gabungan semua pangkat. Titik di kanan-atas "
-            #     "dari garis 0,0 = Kuadran I, dan seterusnya searah jarum jam."
-            # )
-            if len(visible) > 0:
-                fig = go.Figure()
-                for k in ["I", "II", "III", "IV"]:
-                    sub = visible[visible["Kuadran"] == k]
-                    fig.add_trace(go.Scatter(
-                        x=sub["Delta_MDP"], y=sub["Delta_QScore"],
-                        mode="markers", name=f"Kuadran {k}",
-                        marker=dict(color=KUADRAN_COLOR[k], size=8, opacity=0.8),
-                        customdata=sub[["Nama", "Satker", "Pangkat", "Sublevel"]],
-                        hovertemplate=(
-                            "<b>%{customdata[0]}</b><br>%{customdata[2]} (%{customdata[3]}) · %{customdata[1]}"
-                            "<br>Δ QScore: %{y:.1f} · Δ MDP: %{x:.2f} th<extra></extra>"
-                        ),
-                    ))
-                fig.add_hline(y=0, line_dash="dash", line_color="#BFC5CA")
-                fig.add_vline(x=0, line_dash="dash", line_color="#BFC5CA")
-                fig.update_layout(
-                    height=330, margin=dict(l=10, r=10, t=10, b=10),
-                    plot_bgcolor=SURFACE, paper_bgcolor=SURFACE,
-                    xaxis_title="Δ MDP vs mean pangkat (tahun)",
-                    yaxis_title="Δ QScore vs mean pangkat",
-                    legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
-                    font=dict(color=INK, size=12),
-                )
-                fig.update_xaxes(gridcolor=LINE, zeroline=False)
-                fig.update_yaxes(gridcolor=LINE, zeroline=False)
-                st.plotly_chart(fig, use_container_width=True)
-            else:
-                st.info("Tidak ada data pada kombinasi filter ini.")
-
-        st.write("")
-        with st.container(border=True):
-            st.markdown("**Distribusi Readiness Promosi**")
-            scoped_admin = df[df["Pangkat"].isin(f_pangkat) & df["Satker"].isin(f_satker)]
-            counts = scoped_admin["Readiness"].value_counts().reindex(READINESS_ORDER).fillna(0)
-            fig2 = go.Figure(go.Bar(
-                x=counts.index, y=counts.values,
-                marker_color=[READINESS_COLOR[r] for r in counts.index],
-                text=counts.values.astype(int), textposition="outside",
-            ))
-            fig2.update_layout(
-                height=190, margin=dict(l=8, r=8, t=6, b=8),
-                plot_bgcolor=SURFACE, paper_bgcolor=SURFACE,
-                yaxis_title="Jumlah", font=dict(color=INK, size=11),
-                showlegend=False,
-            )
-            fig2.update_xaxes(gridcolor=LINE)
-            fig2.update_yaxes(gridcolor=LINE)
-            st.plotly_chart(fig2, use_container_width=True)
-
-    with right:
-        with st.container(border=True):
-            st.markdown("**Ringkasan per kuadran**")
-            for k in ["I", "II", "III", "IV"]:
-                members = scoped[scoped["Kuadran"] == k]
-                count = len(members)
-                dim = "" if k in f_kuadran else "opacity:0.4;"
-                st.markdown(
-                    f"<div class='sikabi-quad-row quad-{k}' style='{dim}'>"
-                    f"<div><span class='sikabi-dot' style='background:{KUADRAN_COLOR[k]}'></span>"
-                    f"<b>Kuadran {k}</b><br><span style='font-size:11.5px;color:{INK_SOFT};margin-left:17px;"
-                    f"display:inline-block;max-width:230px'>{KUADRAN_DESC[k]}</span></div>"
-                    f"<div style='font-size:20px;font-weight:700;color:{KUADRAN_COLOR[k]}'>{count}</div></div>",
-                    unsafe_allow_html=True,
-                )
-                with st.popover(f"Lihat {count} nama di Kuadran {k}", use_container_width=True, disabled=count == 0):
-                    if count > 0:
-                        names_df = members[["Nama", "Satker", "Pangkat", "QScore"]].sort_values("QScore", ascending=False)
-                        st.dataframe(names_df, use_container_width=True, hide_index=True, height=220)
-                        st.download_button(
-                            f"⬇️ Unduh daftar Kuadran {k} (.xlsx)",
-                            data=df_to_xlsx_bytes(names_df),
-                            file_name=f"kuadran_{k}.xlsx",
-                            key=f"dl_kuadran_{k}",
-                        )
-
-    st.write("")
-    with st.container(border=True):
-        st.markdown(f"**Daftar prioritas promosi** ({len(visible)} pegawai)")
-        show_cols = ["Nama", "Satker", "Pangkat", "Sublevel", "QScore", "MDP_Tahun", "Kuadran", "Readiness"]
-        sorted_visible = visible[show_cols].sort_values("QScore", ascending=False)
-        st.dataframe(sorted_visible, use_container_width=True, hide_index=True, height=320)
-        st.download_button(
-            "⬇️ Export laporan (.xlsx)", data=df_to_xlsx_bytes(sorted_visible), file_name="laporan_kuadran.xlsx"
-        )
-
-
-# ---------------------------------------------------------------------------
-# Page: Data Pegawai
-# ---------------------------------------------------------------------------
-def page_pegawai(df):
-    page_header("Data Pegawai & Rincian Penilaian")
-    # st.caption("Data pegawai bersifat tetap (ditarik dari sumber lain) — setiap skor bisa ditelusuri ke kolom mentahnya di sebelah kanan.")
-
-    with st.container(border=True):
-        fcol1, fcol2, fcol3, fcol4 = st.columns([2, 1.3, 1.3, 1.3])
-        q = fcol1.text_input("Cari NIP / nama")
-        f_pangkat = fcol2.multiselect("Pangkat", PANGKAT_OPTS, default=PANGKAT_OPTS)
-        f_satker = fcol3.multiselect("Satuan kerja", SATKER_OPTS, default=SATKER_OPTS)
-        f_status = fcol4.multiselect("Status akhir", STATUS_OPTS, default=STATUS_OPTS)
-
-    view = df.copy()
-    if q:
-        view = view[view["Nama"].str.contains(q, case=False) | view["NIP"].astype(str).str.contains(q)]
-    view = view[view["Pangkat"].isin(f_pangkat) & view["Satker"].isin(f_satker) & view["Status_Akhir"].isin(f_status)]
-
-    tab_ringkas, tab_lengkap = st.tabs(["Tampilan ringkas", "Tampilan lengkap"])
-
-    ringkas_cols = [
-        "NIP", "Nama", "Satker", "Pangkat", "Sublevel",
-        "Quantitative_Score", "Qualitative_Score", "QScore", "Status_Akhir", "Readiness", "Kuadran",
-    ]
-    lengkap_cols = ringkas_cols[:5] + [
-        "NK_1", "NK_2", "NK_3", "NK_4", "NK_5", "NK_Mean", "Skor_NK",
-        "MDG_Tahun", "MDGS_Tahun", "MDP_Tahun", "Skor_MDP",
-        "Pendidikan", "Skor_Pendidikan",
-        "Sertifikasi", "Skor_Sertifikasi",
-        "Quantitative_Score",
-        "Exposure", "Potensi", "Skor_Potensi", "K3", "Skor_K3",
-        "Qualitative_Score", "QScore", "Status_Akhir", "Readiness", "Kuadran",
-    ]
-
-    with tab_ringkas:
-        st.dataframe(view[ringkas_cols].sort_values("QScore", ascending=False),
-                     use_container_width=True, hide_index=True, height=420)
-    with tab_lengkap:
-        st.dataframe(view[lengkap_cols].sort_values("QScore", ascending=False),
-                     use_container_width=True, hide_index=True, height=420)
-
-    st.caption(f"Menampilkan {len(view)} dari {len(df)} pegawai")
-
-    st.write("")
-    with st.container(border=True):
-        st.markdown("#### Detail & breakdown skor per pegawai")
-        view2 = view.copy()
-        view2["_label"] = view2["NIP"].astype(str) + " — " + view2["Nama"]
-        label_pilihan = st.selectbox("Pilih pegawai", view2["_label"].tolist() if len(view2) else [])
-        if label_pilihan:
-            row = view2[view2["_label"] == label_pilihan].iloc[0]
-            d1, d2, d3 = st.columns(3)
-            with d1:
-                st.markdown("**Data dasar**")
-                st.write(f"NIP: {row['NIP']}")
-                st.write(f"Satker: {row['Satker']}")
-                st.write(f"Pangkat: {row['Pangkat']} ({row['Sublevel']})")
-                st.write(f"MDG (masa dinas grade): {row['MDG_Tahun']} tahun")
-                st.write(f"MDGS (masa dinas grade senior): {row['MDGS_Tahun']} tahun")
-                st.write(f"Sisa masa dinas: {row['Remaining_Service']} tahun")
-            with d2:
-                st.markdown("**Komponen Quantitative**")
-                st.write(f"NK rata-rata 5 th: {row['NK_Mean']} → skor {row['Skor_NK']}")
-                st.write(f"MDP (MDG+MDGS): {row['MDP_Tahun']} th → skor {row['Skor_MDP']}")
-                st.write(f"Pendidikan: {row['Pendidikan']} → skor {row['Skor_Pendidikan']}")
-                st.write(f"Sertifikasi: {row['Sertifikasi']} → skor {row['Skor_Sertifikasi']}")
-                st.write(f"**Quantitative Score: {row['Quantitative_Score']}**")
-            with d3:
-                st.markdown("**Komponen Qualitative**")
-                st.write(f"Exposure: {row['Exposure']}")
-                st.write(f"Potensi: {row['Potensi']} → skor {row['Skor_Potensi']}")
-                st.write(f"K3: {row['K3']} → skor {row['Skor_K3']}")
-                st.write(f"**Qualitative Score: {row['Qualitative_Score']}**")
-                st.write(f"**QScore final: {row['QScore']}**")
-
-            badge_admin = "✅ Lolos" if row["Lolos_Administrasi"] else "❌ Tidak lolos"
-            badge_kpp = "✅ Lolos" if row["Lolos_KPP"] else "❌ Tidak lolos"
-            st.info(
-                f"Gate Administrasi: {badge_admin} · Gate KPP: {badge_kpp} · Status akhir: **{row['Status_Akhir']}** · "
-                f"Readiness: **{row['Readiness']}**" + (f" · Kuadran **{row['Kuadran']}**" if row["Kuadran"] else "")
-            )
-
-
-# ---------------------------------------------------------------------------
-# Page: Gate Keputusan
-# ---------------------------------------------------------------------------
-def page_gate(df):
-    page_header("Penentuan Kandidat KPP BI Wide")
-    # st.caption(
-    #     "Alur: Syarat Administrasi → Kriteria KPP → cek Grade. Pegawai **Reguler** yang lolos "
-    #     "diarahkan ke jalur Promosi Grade; pegawai **Senior** yang lolos masuk ke Readiness KPP "
-    #     "dan Prioritisasi Kuadran."
-    # )
-
-    tab1, tab2, tab3 = st.tabs(["Syarat Administrasi", "Kriteria KPP", "Grade Senior / MDG"])
-
-    with st.container(border=True):
-        fcol1, fcol2 = st.columns(2)
-        f_pangkat = fcol1.multiselect("Filter pangkat", PANGKAT_OPTS, default=PANGKAT_OPTS, key="gate_pangkat")
-        f_status = fcol2.multiselect("Filter status akhir", STATUS_OPTS, default=STATUS_OPTS, key="gate_status")
-
-    view = df[df["Pangkat"].isin(f_pangkat) & df["Status_Akhir"].isin(f_status)]
-
-    with tab1:
-        total = len(df[df["Pangkat"].isin(f_pangkat)])
-        lolos = int(df[df["Pangkat"].isin(f_pangkat)]["Lolos_Administrasi"].sum())
-        m1, m2 = st.columns(2)
-        m1.metric("Lolos Administrasi", f"{lolos:,}".replace(",", "."))
-        m2.metric("Tidak Lolos", f"{total - lolos:,}".replace(",", "."))
-        cols = ["Nama", "Pangkat"] + list(ADMIN_CHECK_LABELS.keys()) + ["Lolos_Administrasi"]
-        show = view[cols].rename(columns={**ADMIN_CHECK_LABELS, "Lolos_Administrasi": "LOLOS ADMINISTRASI"})
-        st.dataframe(show, use_container_width=True, hide_index=True, height=420)
-
-    with tab2:
-        admin_pop = df[df["Pangkat"].isin(f_pangkat) & df["Lolos_Administrasi"]]
-        lolos_kpp = int(admin_pop["Lolos_KPP"].sum())
-        m1, m2 = st.columns(2)
-        m1.metric("Lolos Kriteria KPP", f"{lolos_kpp:,}".replace(",", "."))
-        m2.metric("Dari yang lolos administrasi", f"{len(admin_pop):,}".replace(",", "."))
-        cols = ["Nama", "Pangkat", "Passing_Grade_QScore", "QScore"] + list(KPP_CHECK_LABELS.keys()) + ["Lolos_KPP"]
-        show = view[cols].rename(columns={**KPP_CHECK_LABELS, "Lolos_KPP": "LOLOS KPP"})
-        st.dataframe(show, use_container_width=True, hide_index=True, height=420)
-
-    with tab3:
-        kpp_pop = df[df["Pangkat"].isin(f_pangkat) & df["Lolos_KPP"]]
-        n_senior = int((kpp_pop["Status_Akhir"] == "Proses KPP").sum())
-        n_ready_grade = int((kpp_pop["Status_Akhir"] == "Ready Promosi Grade").sum())
-        n_belum_grade = int((kpp_pop["Status_Akhir"] == "Belum Siap Promosi Grade").sum())
-        m1, m2, m3 = st.columns(3)
-        m1.metric("Senior → Proses KPP", f"{n_senior:,}".replace(",", "."))
-        m2.metric("Reguler siap naik Grade", f"{n_ready_grade:,}".replace(",", "."))
-        m3.metric("Reguler belum siap", f"{n_belum_grade:,}".replace(",", "."))
-        cols = [
-            "Nama", "Pangkat", "Sublevel", "Is_Senior",
-            "MDG_Tahun", "Chk_Ready_Promosi_Grade",
-            "MDGS_Tahun", "Chk_Ready_Promosi_Pangkat",
-            "Readiness", "Status_Akhir",
-        ]
-        show = view[cols].rename(columns={
-            "Is_Senior": "Grade Senior?",
-            "Chk_Ready_Promosi_Grade": "MDG >= threshold?",
-            "Chk_Ready_Promosi_Pangkat": "MDGS >= threshold?",
-        })
-        st.dataframe(show, use_container_width=True, hide_index=True, height=420)
-
-
-# ---------------------------------------------------------------------------
-# Page: Pengaturan (CRUD)
-# ---------------------------------------------------------------------------
-def crud_section(sheet, key_col, value_cols, value_step=0.01, value_format="%.4f"):
-    df_ref = st.session_state[f"ref_{sheet}"]
-
-    st.markdown("**Data saat ini** — ubah nilainya langsung, lalu klik Simpan")
-    edited = st.data_editor(
-        df_ref, num_rows="fixed", disabled=[key_col],
-        use_container_width=True, hide_index=True, key=f"editor_{sheet}",
-    )
-    if st.button("💾 Simpan perubahan nilai", key=f"save_{sheet}"):
-        st.session_state[f"ref_{sheet}"] = edited
-        save_to_disk()
-        st.success(f"Nilai pada {sheet} disimpan.")
-        st.rerun()
-
-    add_col, del_col = st.columns(2)
-    with add_col:
-        st.markdown("**➕ Tambah baris**")
-        with st.form(f"add_{sheet}", clear_on_submit=True):
-            new_key = st.text_input(key_col, key=f"newkey_{sheet}")
-            new_values = {}
-            for vc in value_cols:
-                new_values[vc] = st.number_input(vc, step=value_step, format=value_format, key=f"newval_{sheet}_{vc}")
-            submitted = st.form_submit_button("Tambah baris")
-            if submitted:
-                if not new_key.strip():
-                    st.error(f"{key_col} tidak boleh kosong.")
-                elif new_key in df_ref[key_col].astype(str).values:
-                    st.error(f"'{new_key}' sudah ada di {key_col}.")
+                if status_k.lower() in ['kritis']:
+                    warna_border = "#FF4B4B"
+                    warna_bg = "rgba(255, 75, 75, 0.08)"
+                elif status_k.lower() in ['waspada']:
+                    warna_border = "#FFA500"
+                    warna_bg = "rgba(255, 165, 0, 0.08)"
                 else:
-                    new_row = {key_col: new_key, **new_values}
-                    st.session_state[f"ref_{sheet}"] = pd.concat([df_ref, pd.DataFrame([new_row])], ignore_index=True)
-                    save_to_disk()
-                    st.success(f"Baris '{new_key}' ditambahkan.")
-                    st.rerun()
+                    warna_border = "#21C354"
+                    warna_bg = "rgba(33, 195, 84, 0.08)"
 
-    with del_col:
-        st.markdown("**🗑️ Hapus baris**")
-        to_delete = st.multiselect(f"Pilih {key_col} yang mau dihapus", df_ref[key_col].astype(str).tolist(), key=f"del_{sheet}")
-        if st.button("Hapus baris terpilih", key=f"delbtn_{sheet}", disabled=len(to_delete) == 0):
-            st.session_state[f"ref_{sheet}"] = df_ref[~df_ref[key_col].astype(str).isin(to_delete)].reset_index(drop=True)
-            save_to_disk()
-            st.success(f"{len(to_delete)} baris dihapus.")
-            st.rerun()
+                warna_inflasi = "red" if delta_n1 > 0 else "green"
+                tanda_inflasi = "▲" if delta_n1 > 0 else "▼" if delta_n1 < 0 else "-"
 
+                link_foto = kamus_foto.get(str(kom).lower(), "")
+                
+                # PERHATIAN: Semua baris HTML diletakkan di tepi kiri
+                card_html = f"""
+<div style="position: relative; overflow: hidden; border: 2px solid {warna_border}; border-radius: 10px; padding: 15px; background-color: {warna_bg}; margin-bottom: 10px; color: inherit;">
+<img src="{link_foto}" style="position: absolute; right: 0; top: 0; height: 100%; width: 45%; object-fit: cover; object-position: right center; opacity: 0.25; z-index: 0; -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 80%); mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 80%);">
+<div style="position: relative; z-index: 1;">
+<div style="font-size: 1.15rem; font-weight: bold; margin-top:0px; margin-bottom:10px; color: inherit; display:flex; align-items:center; gap:8px;">{icon} {kom}</div>
+<p style="margin:0px; font-size:15px; color: inherit;">Harga Saat Ini: <b>Rp {harga_n:,.0f}</b></p>
+<p style="margin:0px; font-size:15px; color: inherit;">Prediksi (N+1): <b>Rp {harga_n1:,.0f}</b></p>
+<p style="margin-top:5px; margin-bottom:0px; font-size:24px; font-weight:bold; color:{warna_inflasi};">{tanda_inflasi} {delta_n1:+.2f}%</p>
+<hr style="margin: 10px 0px; border-color: {warna_border}; opacity: 0.3;">
+<p style="margin:0px; font-size:14px; font-weight:bold; color:{warna_border};">Status: {status_k}</p>
+</div>
+</div>
+"""
+                with cols[idx % 4]:
+                    st.markdown(card_html, unsafe_allow_html=True)
+                    st.button("Lihat Analisis", key=f"btn_{kom}", on_click=go_to_detail, args=(kom,), use_container_width=True)
 
-def page_master():
-    page_header("Pengaturan")
-    st.caption(
-        "Tabel referensi yang menentukan bobot & konversi skor. "
-        "Data pegawai TIDAK dikelola di sini — dianggap sumber tetap dari sistem lain."
-    )
+    # ==========================================
+    # HALAMAN 2: DETAIL KOMODITAS
+    # ==========================================
+    elif st.session_state.page == 'Detail':
+        komoditas = st.session_state.selected_komoditas
+        icon_detail = get_icon(komoditas)
 
-    tabs = st.tabs([
-        "Bobot Quantitative", "Bobot Qualitative", "Bobot per Pangkat",
-        "Skor Pendidikan", "Skor Sertifikasi", "Skor K3", "Skor Potensi", "Threshold Administrasi",
-    ])
-    with tabs[0]:
-        crud_section("Quant_Weights", key_col="Parameter", value_cols=["Value"])
-    with tabs[1]:
-        crud_section("Qual_Weights", key_col="Parameter", value_cols=["Value"])
-    with tabs[2]:
-        crud_section("Rank_Weights", key_col="Pangkat", value_cols=["Quantitative", "Qualitative"])
-    with tabs[3]:
-        crud_section("Education_Score", key_col="Kategori", value_cols=["Nilai"], value_step=1.0, value_format="%.0f")
-    with tabs[4]:
-        crud_section("Certification_Score", key_col="Kategori", value_cols=["Nilai"], value_step=1.0, value_format="%.0f")
-    with tabs[5]:
-        crud_section("K3_Score", key_col="Kategori", value_cols=["Nilai"], value_step=1.0, value_format="%.0f")
-    with tabs[6]:
-        st.caption("Diurutkan dari kategori terbaik ke paling dasar: Future Leader → High Impact Performer → Core Employee.")
-        crud_section("Potensi_Score", key_col="Kategori", value_cols=["Nilai"], value_step=1.0, value_format="%.0f")
-    with tabs[7]:
-        crud_section("Thresholds", key_col="Parameter", value_cols=["Value"])
+        # Tombol kembali dinaikkan ke atas judul
+        st.button("Kembali", on_click=go_to_home, type="secondary")
 
+        st.markdown(f"<div style='font-size:2rem; font-weight:bold; margin-top:10px; margin-bottom:20px; color:inherit; display:flex; align-items:center; gap:12px;'>{icon_detail} Analisis Detail EWS: {komoditas}</div>", unsafe_allow_html=True)
 
-# ---------------------------------------------------------------------------
-# Router
-# ---------------------------------------------------------------------------
-if page == "Dashboard":
-    page_dashboard(df)
-elif page == "Data Pegawai":
-    page_pegawai(df)
-elif page == "Penentuan Kandidat KPP":
-    page_gate(df)
-elif page == "Pengaturan":
-    page_master()
+        df_filtered = df_master[df_master[col_komoditas] == komoditas].copy().sort_values('bulan_tahun')
+        df_hist = df_filtered[df_filtered['actual'] > 0].copy()
+        df_proj_all = df_filtered[(df_filtered['actual'] == 0) | (df_filtered['actual'].isna())].copy()
+        df_proj_all = df_proj_all[df_proj_all['forecast'] > 0]
+
+        max_bulan = len(df_proj_all)
+        options_waktu = ['Nowcasting'] + [f"{i} Bulan" for i in range(1, max_bulan + 1)] if max_bulan > 0 else ['Nowcasting']
+
+        st.sidebar.title("Filter Proyeksi")
+        pilihan_waktu = st.sidebar.select_slider(
+            "Target Prediksi Ke Depan:",
+            options=options_waktu,
+            value=options_waktu[-1] if max_bulan > 0 else 'Nowcasting'
+        )
+        filter_bulan = options_waktu.index(pilihan_waktu)
+        df_proj = df_proj_all.head(filter_bulan)
+
+        status_terkini = df_proj['ews_status'].iloc[-1] if not df_proj.empty else (df_hist['ews_status'].iloc[-1] if not df_hist.empty else "Historical")
+
+        harga_n = df_hist['actual'].iloc[-1] if not df_hist.empty else 0
+        harga_n1 = df_proj['forecast'].iloc[0] if not df_proj.empty else harga_n
+        delta_n1 = ((harga_n1 - harga_n) / harga_n) * 100 if harga_n > 0 else 0
+
+        proj_naik = 0; tgl_proj_akhir = "-"
+        if not df_proj.empty and harga_n > 0:
+            proj_naik = ((df_proj['forecast'].iloc[-1] - harga_n) / harga_n) * 100
+            tgl_proj_akhir = df_proj['bulan_tahun'].iloc[-1].strftime('%b %Y')
+
+        mape_val = df_filtered['mape'].dropna().iloc[0] if not df_filtered['mape'].dropna().empty else 0
+        akurasi = 100 - mape_val if mape_val > 1 else (1 - mape_val) * 100
+
+        col1, col2, col3, col4 = st.columns(4)
+
+        # Status warna dinamis di card Detail
+        status_lower = str(status_terkini).lower()
+        if status_lower in ['kritis']:
+            warna_status_detail = "#FF4B4B"
+            bg_status_detail = "rgba(255, 75, 75, 0.1)"
+        elif status_lower in ['waspada', 'high price risk']:
+            warna_status_detail = "#FFA500"
+            bg_status_detail = "rgba(255, 165, 0, 0.1)"
+        else:
+            warna_status_detail = "#21C354"
+            bg_status_detail = "rgba(33, 195, 84, 0.1)"
+
+        with col1:
+            st.markdown(f"""
+            <div style="padding: 12px 15px; border-radius: 8px; background-color: {bg_status_detail}; border-left: 5px solid {warna_status_detail}; height: 100%;">
+                <p style="margin:0; font-size:14px; opacity:0.8;">Status EWS ({pilihan_waktu})</p>
+                <h2 style="margin:5px 0 0 0; font-size: 2rem; color:{warna_status_detail};">{str(status_terkini).upper()}</h2>
+            </div>
+            """, unsafe_allow_html=True)
+            
+        col2.metric("Potensi Gejolak (N+1)", f"{delta_n1:+.2f}%", f"Bulan Depan vs Saat Ini")
+        col3.metric(f"Tren Jangka Panjang", f"{proj_naik:+.2f}%" if tgl_proj_akhir != "-" else "N/A", f"S.d {tgl_proj_akhir}", delta_color="off")
+        col4.metric("Tingkat Akurasi", f"{akurasi:.2f}%", "Akurasi Historis")
+        st.divider()
+
+        st.markdown("<div class='custom-subheader'>Tren Harga & Proyeksi Interval Risiko</div>", unsafe_allow_html=True)
+        
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+        if 'neraca' in df_filtered.columns:
+            fig.add_trace(go.Bar(x=df_hist['bulan_tahun'], y=df_hist['neraca'], name='Neraca Aktual', marker_color='rgba(54, 162, 235, 0.4)'), secondary_y=True)
+            if not df_proj.empty:
+                fig.add_trace(go.Bar(x=df_proj['bulan_tahun'], y=df_proj['neraca'], name='Proyeksi Neraca', marker_color='rgba(255, 159, 64, 0.5)'), secondary_y=True)
+        if not df_proj.empty and 'lower_ci' in df_proj.columns and 'upper_ci' in df_proj.columns:
+            tgl_ci = pd.concat([df_hist['bulan_tahun'].tail(1), df_proj['bulan_tahun']])
+            upper_ci = pd.concat([df_hist['actual'].tail(1), df_proj['upper_ci']])
+            lower_ci = pd.concat([df_hist['actual'].tail(1), df_proj['lower_ci']])
+            fig.add_trace(go.Scatter(x=pd.concat([tgl_ci, tgl_ci[::-1]]), y=pd.concat([upper_ci, lower_ci[::-1]]), fill='toself', fillcolor='rgba(231, 76, 60, 0.15)', line=dict(color='rgba(255,255,255,0)'), hoverinfo="skip", name='Interval Risiko (CI)'), secondary_y=False)
+        fig.add_trace(go.Scatter(x=df_hist['bulan_tahun'], y=df_hist['actual'], name='Harga Aktual', mode='lines+markers', line=dict(color='blue', width=3)), secondary_y=False)
+        if not df_proj.empty:
+            df_proj_connected = pd.concat([df_hist.tail(1), df_proj])
+            y_proj = pd.concat([df_hist['actual'].tail(1), df_proj['forecast']])
+            fig.add_trace(go.Scatter(x=df_proj_connected['bulan_tahun'], y=y_proj, name='Proyeksi Harga', mode='lines+markers', line=dict(color='red', width=3, dash='dash')), secondary_y=False)
+        if 'threshold_kritis_atas' in df_filtered.columns and not df_filtered['threshold_kritis_atas'].isna().all():
+            thresh_val = df_filtered['threshold_kritis_atas'].dropna().iloc[0]
+            all_dates = pd.concat([df_hist['bulan_tahun'], df_proj['bulan_tahun']]) if not df_proj.empty else df_hist['bulan_tahun']
+            fig.add_trace(go.Scatter(x=all_dates, y=[thresh_val]*len(all_dates), name='Batas Kritis EWS', mode='lines', line=dict(color='rgba(231, 76, 60, 0.8)', width=1.5, dash='dot')), secondary_y=False)
+
+        fig.update_layout(height=450, hovermode='x unified', legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+        fig.update_yaxes(title_text="<b>Harga (Rp)</b>", secondary_y=False)
+        if 'neraca' in df_filtered.columns: fig.update_yaxes(title_text="<b>Neraca (Ton)</b>", secondary_y=True, showgrid=False)
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.divider()
+
+        col_mit, col_email = st.columns([1.2, 1])
+
+        with col_mit:
+            st.markdown("<div class='custom-subheader' style='margin-top:0;'>Rekomendasi Kebijakan</div>", unsafe_allow_html=True)
+
+            worst_status = "aman"
+            worst_month = None
+            worst_delta = 0
+
+            for i, (idx, row) in enumerate(df_proj_all.iterrows()):
+                s = str(row['ews_status']).lower()
+                if s in ['kritis']:
+                    worst_status = 'kritis'
+                    worst_month = row['bulan_tahun'].strftime('%B %Y')
+                    worst_delta = i + 1
+                    break
+                elif s in ['waspada', 'high price risk'] and worst_status == 'aman':
+                    worst_status = 'waspada'
+                    worst_month = row['bulan_tahun'].strftime('%B %Y')
+                    worst_delta = i + 1
+
+            if worst_status == 'kritis':
+                st.error(f"**STATUS KRITIS PADA {worst_delta} BULAN KE DEPAN ({worst_month.upper()})!**")
+                st.markdown("""
+                * **Tindakan Darurat:** Segera jadwalkan Operasi Pasar Murah (OPM) berkoordinasi dengan Bulog daerah.
+                * **Pasokan:** Lakukan inspeksi jalur distribusi untuk mencegah penimbunan (kartel).
+                * **Regulasi:** Siapkan pengajuan kuota pasokan darurat ke pusat (Badan Pangan Nasional).
+                """)
+            elif worst_status == 'waspada':
+                st.warning(f"**STATUS WASPADA PADA {worst_delta} BULAN KE DEPAN ({worst_month.upper()})!**")
+                st.markdown("""
+                * **Tindakan Pencegahan:** Tingkatkan frekuensi pemantauan harga harian di Pasar Induk.
+                * **Pasokan:** Hubungi distributor lokal utama untuk memastikan rencana pasokan bulan depan aman.
+                * **Komunikasi:** Terbitkan himbauan untuk tidak *panic buying* ke masyarakat.
+                """)
+            else:
+                st.success("**STATUS KESELURUHAN AMAN**")
+                st.markdown("""
+                * **Tindakan:** Lanjutkan monitoring rutin (Mingguan).
+                * Kondisi pasokan dan tren harga ke depan dinilai stabil oleh model. Tidak memerlukan intervensi darurat saat ini.
+                """)
+
+            st.markdown("---")
+            arima_order = df_filtered['arima_order'].dropna().iloc[0] if 'arima_order' in df_filtered.columns and not df_filtered['arima_order'].dropna().empty else "-"
+            exog_nama = df_filtered['exog_utama'].dropna().iloc[0] if 'exog_utama' in df_filtered.columns and not df_filtered['exog_utama'].dropna().empty else "Tidak ada"
+            st.info(f"**Analisis Faktor Utama (Model {arima_order}):** Gejolak sangat dipengaruhi oleh variabel eksternal **{str(exog_nama).replace('Eks_','')}**.")
+
+        with col_email:
+            st.markdown("<div class='custom-subheader' style='margin-top:0;'>Surat Instruksi Pemimpin</div>", unsafe_allow_html=True)
+            with st.container(border=True):
+                catatan_bos = st.text_area("Catatan/Instruksi Pemimpin BI Sumsel:", placeholder="Ketik instruksi kebijakan di sini untuk dikirim ke seluruh Tim TPID...")
+
+                with st.expander("Konfigurasi Pengirim (Wajib Diisi 1x)"):
+                    st.caption("Masukkan kredensial email Anda untuk mengaktifkan fitur pengiriman.")
+                    pengirim_email = st.text_input("Email Gmail Pengirim:")
+                    pengirim_pass = st.text_input("App Password Gmail:", type="password")
+
+                list_penerima = [
+                    "aidandaffa2nd@gmail.com",
+                    "azghisyani@gmail.com",
+                    "taniariesty@gmail.com",
+                    "hildaidamaharani@gmail.com"
+                ]
+
+                if st.button("Kirim Email Instruksi ke Seluruh Tim TPID", type="primary", use_container_width=True):
+                    if not pengirim_email or not pengirim_pass:
+                        st.error("Silakan isi Konfigurasi Pengirim terlebih dahulu.")
+                    elif not catatan_bos:
+                        st.error("Catatan instruksi tidak boleh kosong!")
+                    else:
+                        with st.spinner("Mengirim instruksi ke seluruh Tim TPID..."):
+                            try:
+                                msg = MIMEMultipart("alternative")
+                                msg["Subject"] = f"Peringatan Dini EWS: {komoditas.upper()} ({status_terkini.upper()})"
+                                msg["From"] = pengirim_email
+                                msg["To"] = ", ".join(list_penerima)
+
+                                html_template = f"""
+                                <html>
+                                <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                                    <div style="border:1px solid #ddd; padding:20px; border-radius:10px;">
+                                        <h2 style="color: #d9534f; border-bottom: 2px solid #d9534f; padding-bottom: 10px;">
+                                            Early Warning System - BI Sumsel
+                                        </h2>
+                                        <p>Tim TPID yang terhormat,</p>
+                                        <p>Sistem EWS Pangan mendeteksi anomali pada komoditas <b>{komoditas}</b>.</p>
+                                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                                            <tr>
+                                                <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;"><b>Status Peringatan ({pilihan_waktu})</b></td>
+                                                <td style="padding: 8px; border: 1px solid #ddd;"><b>{status_terkini.upper()}</b></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;"><b>Harga Saat Ini</b></td>
+                                                <td style="padding: 8px; border: 1px solid #ddd;">Rp {harga_n:,.0f}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;"><b>Proyeksi N+1 (Bulan Depan)</b></td>
+                                                <td style="padding: 8px; border: 1px solid #ddd;">Rp {harga_n1:,.0f} ({delta_n1:+.2f}%)</td>
+                                            </tr>
+                                        </table>
+                                        <h3 style="color: #2c3e50;">Instruksi Pemimpin BI Sumsel:</h3>
+                                        <blockquote style="background: #eef2f5; padding: 15px; border-left: 5px solid #3498db; font-size: 16px; font-style: italic;">
+                                            "{catatan_bos}"
+                                        </blockquote>
+                                        <br>
+                                        <p style="font-size: 12px; color: #999;">Email ini dikirim secara otomatis melalui Dashboard EIS Pangan.</p>
+                                    </div>
+                                </body>
+                                </html>
+                                """
+                                msg.attach(MIMEText(html_template, "html"))
+
+                                server = smtplib.SMTP("smtp.gmail.com", 587)
+                                server.starttls()
+                                server.login(pengirim_email, pengirim_pass)
+                                server.sendmail(pengirim_email, list_penerima, msg.as_string())
+                                server.quit()
+
+                                st.success("Sukses! Instruksi darurat telah disiarkan ke seluruh email Tim TPID.")
+                            except Exception as e:
+                                st.error(f"Gagal mengirim email. Periksa kembali koneksi internet dan App Password Anda. Error: {e}")
+
+# ==========================================
+# FOOTER WEBSITE AMPERA
+# ==========================================
+st.markdown("""
+<div class="footer-wrapper">
+    &copy; 2026 Kelompok 2 Kelas C PCPM 40 - Bank Indonesia
+</div>
+""", unsafe_allow_html=True)
